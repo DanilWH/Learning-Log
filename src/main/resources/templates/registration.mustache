@@ -1,15 +1,14 @@
 {{#base}}
     <head>
-        <title>Log In page</title>
+        <title>Registration page</title>
     </head>
     <body>
-        <form action="/login" method="post">
+        <form action="/registration" method="post">
             <div><label> User Name : <input type="text" name="username"/> </label></div>
             <div><label> Password: <input type="password" name="password"/> </label></div>
             <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
-            <div><input type="submit" value="Sign In"/></div>
+            <div><input type="submit" value="Sign Up"/></div>
         </form>
     </body>
-    <a href="/registration">Sign Up</a>
 {{/base}}
 {{>base}} 

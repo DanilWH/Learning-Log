@@ -2,14 +2,14 @@ package com.example.LearningLog.controllers;
 
 import java.util.Map;
 
+import com.example.LearningLog.domains.Topic;
+import com.example.LearningLog.repos.TopicRepo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.example.LearningLog.domains.Topic;
-import com.example.LearningLog.repos.TopicRepo;
 
 @Controller
 public class MainController {

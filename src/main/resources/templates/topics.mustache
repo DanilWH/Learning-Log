@@ -1,12 +1,10 @@
 {{#base}}
 
-	<div>
 	<form action="/logout" method="post">
 		<input type="hidden" name="_csrf" value="{{_csrf.token}}" />
         <input type="submit" value="Sign Out"/>
     </form>
-	</div>
-
+    
 	<p>Topics:</p>
 	
 	<ul>
@@ -14,6 +12,9 @@
 		<li>{{title}}</li>
     {{/topics}}
     </ul>
+    {{^topics}}
+    	<p>No topics has been added yet.</p>
+    {{/topics}}
     
     <a href="/new_topic">Add a new topic</a>
 {{/base}}
