@@ -1,0 +1,16 @@
+{{#base}}
+	<p>Topic: <a href="/topics">{{topicTitle}}</a></p>
+	
+	<p>Entries:</p>
+	<ul>
+	{{#entries}}
+		<li>
+			<p>{{text}}</p>
+		</li>
+	{{/entries}}
+	</ul>
+	{{^entries}}
+		<p>There are no entries here yet.</p>
+	{{/entries}}
+{{/base}}
+{{>base}}

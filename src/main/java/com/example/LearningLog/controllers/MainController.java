@@ -2,7 +2,7 @@ package com.example.LearningLog.controllers;
 
 import java.util.Map;
 
-import com.example.LearningLog.domains.Topic;
+import com.example.LearningLog.models.Topic;
 import com.example.LearningLog.repos.TopicRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;

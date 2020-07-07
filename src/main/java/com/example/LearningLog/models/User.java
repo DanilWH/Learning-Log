@@ -1,4 +1,4 @@
-package com.example.LearningLog.domains;
+package com.example.LearningLog.models;
 
 import java.util.Set;
 
@@ -9,6 +9,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
@@ -17,7 +18,7 @@ import javax.persistence.Table;
 @Table(name = "usr")
 public class User {
     @Id 
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
     private String username;
     private String password;

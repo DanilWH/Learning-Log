@@ -1,9 +1,10 @@
-package com.example.LearningLog.domains;
+package com.example.LearningLog.models;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Topic {
@@ -11,6 +12,7 @@ public class Topic {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
     
+    @Size(max = 200)
     private String title;
     
     public Topic() {
