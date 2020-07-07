@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "entries")
@@ -21,7 +22,17 @@ public class Entry {
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
     
+    /**
+     * On Hibernate JPA MYSQL, using @lob plus @column annotation on a String field
+     * gives "wrong column type, expected longtext but column type is text",
+     * the problem can be solved with below example:
+     * 
+     * Solution: @Column(columnDefinition="TEXT")
+     * 
+     */
+    // fine with PostgreSQL
     @Lob
+    @Type(type = "text")
     private String text;
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -29,8 +40,12 @@ public class Entry {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Topic topic;
     
-    public String getTopicTitle() {
-        return this.topic.getTitle();
+    public Entry () {
+    }
+    
+    public Entry (String text, Topic topic) {
+        this.text = text;
+        this.topic = topic;
     }
     
     public Long getId() {

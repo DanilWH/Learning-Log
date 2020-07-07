@@ -1,7 +1,8 @@
 {{#base}}
-	<p>Topic: <a href="/topics">{{topicTitle}}</a></p>
+	<p>Topic: {{topic.title}}</p>
 	
 	<p>Entries:</p>
+	<a href="/topics/{{topic.id}}/entries/new_entry">Add a new entry</a>
 	<ul>
 	{{#entries}}
 		<li>
@@ -12,5 +13,7 @@
 	{{^entries}}
 		<p>There are no entries here yet.</p>
 	{{/entries}}
+	
+	
 {{/base}}
 {{>base}}

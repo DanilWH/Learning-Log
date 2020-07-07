@@ -23,8 +23,16 @@ public class Topic {
         this.title = title;
     }
     
+    public Integer getId() {
+        return this.id;
+    }
+    
     public String getTitle() {
         return this.title;
+    }
+    
+    public void setId(Integer id) {
+        this.id = id;
     }
     
     public void setTitle(String title) {
