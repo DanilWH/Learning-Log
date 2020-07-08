@@ -1,5 +1,8 @@
 package com.example.LearningLog.models;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -21,6 +25,9 @@ public class Entry {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
+    
+    @Size(max = 20)
+    private String dateTime;
     
     /**
      * On Hibernate JPA MYSQL, using @lob plus @column annotation on a String field
@@ -46,10 +53,17 @@ public class Entry {
     public Entry (String text, Topic topic) {
         this.text = text;
         this.topic = topic;
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, Y H:m");
+        this.dateTime = dateFormat.format(new Date());
     }
     
     public Long getId() {
         return this.id;
+    }
+    
+    public String getDateTime() {
+        return this.dateTime;
     }
     
     public String getText() {
@@ -62,6 +76,10 @@ public class Entry {
     
     public void setId(Long id) {
         this.id = id;
+    }
+    
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
     }
     
     public void setText(String text) {

@@ -2,8 +2,6 @@ package com.example.LearningLog.controllers;
 
 import java.util.Map;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,10 +49,8 @@ public class EntryController {
     public String addEntry(
             @PathVariable(value="topicId") Integer topicId,
             @RequestParam String text,
-            @Valid Entry entry,
             Map<String, Object> model
     ) {
-        /*
         Topic topic = this.topicRepo.findById(topicId).get();
         model.put("topic", topic);
         
@@ -62,13 +58,18 @@ public class EntryController {
         this.entryRepo.save(new_entry);
         
         return "redirect:/topics/" + topicId + "/entries";
-        */
         
-        this.topicRepo.findById(topicId).map(topic -> {
-            entry.setTopic(topic);
-            return this.entryRepo.save(entry);
-        });
-        
-        return "redirect:/topics/" + topicId + "/entries";
+        /**
+         * More modern approach:
+         * 
+         * add the parameter "@Valid Entry entry"
+         * 
+         * this.topicRepo.findById(topicId).map(topic -> {
+         *     entry.setTopic(topic);
+         *     return this.entryRepo.save(entry);
+         * });
+         * 
+         * return "redirect:/topics/" + topicId + "/entries";
+         */
     }
 }
