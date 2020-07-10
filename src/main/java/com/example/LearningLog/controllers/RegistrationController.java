@@ -37,7 +37,7 @@ public class RegistrationController {
         }
         
         if (user.getPassword().compareTo(repeat_password) != 0) {
-            model.put("message", "The password doesn't match.");
+            model.put("message", "Your username and password didn't match. Please try again.");
             return "registration";
         }
         

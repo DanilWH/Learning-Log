@@ -19,6 +19,16 @@
 	</properties>
 
 	<dependencies>
+	
+		<!-- tablibs -->
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-taglibs</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.tomcat</groupId>
+		    <artifactId>tomcat-jsp-api</artifactId>
+		</dependency>
 		
 		<dependency>
 		    <groupId>javax.validation</groupId>
@@ -48,7 +58,7 @@
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-mustache</artifactId>
+			<artifactId>spring-boot-starter-freemarker</artifactId>
 		</dependency>
 		
 		<dependency>
