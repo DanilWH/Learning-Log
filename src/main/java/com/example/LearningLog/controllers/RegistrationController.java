@@ -31,15 +31,13 @@ public class RegistrationController {
         ) {
         User userFromDB = this.userRepo.findByUsername(user.getUsername());
 
-        if (userFromDB != null) {
+        if (userFromDB != null)
             model.put("message", "The user already exsists!");
-            return "registration";
-        }
         
-        if (user.getPassword().compareTo(repeat_password) != 0) {
-            model.put("message", "Your username and password didn't match. Please try again.");
-            return "registration";
-        }
+        if (user.getPassword().equals(repeat_password) == false)
+            model.put("message", "Your passwords didn't match. Please try again.");
+
+        if (model.containsKey("message")) return "registration";
         
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.USER));

@@ -10,7 +10,12 @@
 		<#list entries as entry>
 			<li>
 				<i>${entry.dateTime}</i>
-				<p>${entry.text}</p>
+				<p>
+					<#assign lines = entry.text?split("\n") />
+					<#list lines as line>
+					   ${line} <br />
+					</#list>
+				</p>
 				<hr />
 			</li>
 		<#else>
