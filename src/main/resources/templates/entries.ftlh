@@ -16,7 +16,10 @@
 					   ${line} <br />
 					</#list>
 				</p>
-				<p><a href="/topics/${topic.id}/entries/edit_entry/${entry.id}">Edit entry</a></p>
+				<p>
+					<a href="/topics/${topic.id}/entries/edit_entry/${entry.id}">Edit entry</a> |
+					<a href="/topics/${topic.id}/entries/delete_entry/${entry.id}">Delete entry</a>
+				</p>
 				<hr />
 			</li>
 		<#else>

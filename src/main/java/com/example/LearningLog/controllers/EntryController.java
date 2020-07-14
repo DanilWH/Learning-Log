@@ -87,7 +87,6 @@ public class EntryController {
     
     @GetMapping("/topics/{topicId}/entries/edit_entry/{entryId}")
     public String edit_entry(
-            @PathVariable(value="topicId") Integer topicId,
             @PathVariable(value="entryId") Long entryId,
             @AuthenticationPrincipal User current_user,
             Map<String, Object> model
@@ -105,7 +104,6 @@ public class EntryController {
     
     @PostMapping("/topics/{topicId}/entries/edit_entry/{entryId}")
     public String update_entry(
-            @PathVariable(value="topicId") Integer topicId,
             @PathVariable(value="entryId") Long entryId,
             @RequestParam String text
     ) {
@@ -113,6 +111,30 @@ public class EntryController {
         entry.setText(text);
         this.entryRepo.save(entry);
         
-        return "redirect:/topics/" + topicId + "/entries";
+        return "redirect:/topics/" + entry.getTopic().getId() + "/entries";
+    }
+    
+    @GetMapping("/topics/{topicId}/entries/delete_entry/{entryId}")
+    public String delete_entry_confirmation(
+            @PathVariable(value="entryId") Long entryId,
+            Map<String, Object> model
+    ) {
+        Entry entry = this.entryRepo.findById(entryId).get();
+        Topic topic = entry.getTopic();
+        
+        model.put("topic", topic);
+        model.put("entry", entry);
+        
+        return "delete";
+    }
+    
+    @PostMapping("/topics/{topicId}/entries/delete_entry/{entryId}")
+    public String delete_entry(
+            @PathVariable(value="entryId") Long entryId
+    ) {
+        Entry entry = this.entryRepo.findById(entryId).get();
+        this.entryRepo.delete(entry);
+        
+        return "redirect:/topics/" + entry.getTopic().getId() + "/entries";
     }
 }
