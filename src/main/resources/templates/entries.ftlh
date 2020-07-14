@@ -16,6 +16,7 @@
 					   ${line} <br />
 					</#list>
 				</p>
+				<p><a href="/topics/${topic.id}/entries/edit_entry/${entry.id}">Edit entry</a></p>
 				<hr />
 			</li>
 		<#else>

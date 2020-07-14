@@ -1,7 +1,7 @@
 package com.example.LearningLog.models;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,7 +27,7 @@ public class Entry {
     private Long id;
     
     @Size(max = 20)
-    private String dateTime;
+    private LocalDateTime dateTime;
     
     /**
      * On Hibernate JPA MYSQL, using @lob plus @column annotation on a String field
@@ -54,8 +54,7 @@ public class Entry {
         this.text = text;
         this.topic = topic;
         
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, Y H:m");
-        this.dateTime = dateFormat.format(new Date());
+        this.dateTime = LocalDateTime.now();
     }
     
     public Long getId() {
@@ -63,7 +62,9 @@ public class Entry {
     }
     
     public String getDateTime() {
-        return this.dateTime;
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MMMM d, Y HH:mm");
+        
+        return dateFormat.format(this.dateTime);
     }
     
     public String getText() {
@@ -78,7 +79,7 @@ public class Entry {
         this.id = id;
     }
     
-    public void setDateTime(String dateTime) {
+    public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
     
