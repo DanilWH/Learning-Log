@@ -14,6 +14,6 @@ public interface CommonOperationsForControllers {
         String topic_owner = topic.getOwner().getUsername();
         
         if (topic_owner.equals(current_user.getUsername()) != true)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
     }
 }

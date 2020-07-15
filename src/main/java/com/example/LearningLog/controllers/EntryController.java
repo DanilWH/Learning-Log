@@ -60,10 +60,14 @@ public class EntryController {
     @PostMapping("/topics/{topicId}/entries/new_entry")
     public String add_entry(
             @PathVariable(value="topicId") Integer topicId,
+            @AuthenticationPrincipal User current_user,
             @RequestParam String text,
             Map<String, Object> model
     ) {
         Topic topic = this.topicRepo.findById(topicId).get();
+        
+        CommonOperationsForControllers.check_topic_owner(topic, current_user);
+        
         model.put("topic", topic);
         
         Entry new_entry = new Entry(text, topic);
@@ -105,22 +109,30 @@ public class EntryController {
     @PostMapping("/topics/{topicId}/entries/edit_entry/{entryId}")
     public String update_entry(
             @PathVariable(value="entryId") Long entryId,
+            @AuthenticationPrincipal User current_user,
             @RequestParam String text
     ) {
         Entry entry = this.entryRepo.findById(entryId).get();
+        Topic topic = entry.getTopic();
+        
+        CommonOperationsForControllers.check_topic_owner(topic, current_user);
+        
         entry.setText(text);
         this.entryRepo.save(entry);
         
-        return "redirect:/topics/" + entry.getTopic().getId() + "/entries";
+        return "redirect:/topics/" + topic.getId() + "/entries";
     }
     
     @GetMapping("/topics/{topicId}/entries/delete_entry/{entryId}")
     public String delete_entry_confirmation(
             @PathVariable(value="entryId") Long entryId,
+            @AuthenticationPrincipal User current_user,
             Map<String, Object> model
     ) {
         Entry entry = this.entryRepo.findById(entryId).get();
         Topic topic = entry.getTopic();
+        
+        CommonOperationsForControllers.check_topic_owner(topic, current_user);
         
         model.put("topic", topic);
         model.put("entry", entry);
@@ -130,11 +142,16 @@ public class EntryController {
     
     @PostMapping("/topics/{topicId}/entries/delete_entry/{entryId}")
     public String delete_entry(
-            @PathVariable(value="entryId") Long entryId
+            @PathVariable(value="entryId") Long entryId,
+            @AuthenticationPrincipal User current_user
     ) {
         Entry entry = this.entryRepo.findById(entryId).get();
+        Topic topic = entry.getTopic();
+        
+        CommonOperationsForControllers.check_topic_owner(topic, current_user);
+        
         this.entryRepo.delete(entry);
         
-        return "redirect:/topics/" + entry.getTopic().getId() + "/entries";
+        return "redirect:/topics/" + topic.getId() + "/entries";
     }
 }

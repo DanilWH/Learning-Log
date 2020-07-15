@@ -1,6 +1,9 @@
 <#import "../parts/base.ftlh" as base>
 
 <@base.content title="404 Error - Learning Log">
-        <h1>The item you requested is not available. (404)</h1>
-        <p>You don't have any access to this page.</p>
+	<h1>404 - Not Found</h1>
+	<p>
+		The requested URL ${springMacroRequestContext.getRequestUri()}
+		search was not found in this server.
+	</p>
 </@base.content>
