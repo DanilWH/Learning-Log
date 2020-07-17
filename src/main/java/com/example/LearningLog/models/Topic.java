@@ -21,6 +21,8 @@ public class Topic {
     @Size(max = 200)
     private String title;
     
+    private Accesses access;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -30,9 +32,10 @@ public class Topic {
         
     }
     
-    public Topic(String title, User owner) {
+    public Topic(String title, User owner, Accesses access) {
         this.title = title;
         this.owner = owner;
+        this.access = access;
     }
     
     public Integer getId() {
@@ -41,6 +44,10 @@ public class Topic {
     
     public String getTitle() {
         return this.title;
+    }
+    
+    public Accesses getAccess() {
+        return this.access;
     }
     
     public User getOwner() {
@@ -55,6 +62,9 @@ public class Topic {
         this.title = title;
     }
     
+    public void setAccess(Accesses access) {
+        this.access = access;
+    }
     public void setOwner(User owner) {
         this.owner = owner;
     }

@@ -34,7 +34,7 @@ public class EntryController {
         
         Topic topic = this.topicRepo.findById(topicId).get();
         
-        CommonOperationsForControllers.check_topic_owner(topic, current_user);
+        CommonOperationsForControllers.checkTopicAccessabilityAndTopicOwner(topic, current_user);
         
         model.put("topic", topic);
         
@@ -57,7 +57,7 @@ public class EntryController {
         
         Topic topic = this.topicRepo.findById(topicId).get();
         
-        CommonOperationsForControllers.check_topic_owner(topic, current_user);
+        CommonOperationsForControllers.checkTopicOwner(topic, current_user);
         
         model.put("topic", topic);
         
@@ -75,7 +75,7 @@ public class EntryController {
         
         Topic topic = this.topicRepo.findById(topicId).get();
         
-        CommonOperationsForControllers.check_topic_owner(topic, current_user);
+        CommonOperationsForControllers.checkTopicOwner(topic, current_user);
         
         model.put("topic", topic);
         
@@ -109,7 +109,7 @@ public class EntryController {
         Entry entry = this.entryRepo.findById(entryId).get();
         Topic topic = entry.getTopic();
         
-        CommonOperationsForControllers.check_topic_owner(topic, current_user);
+        CommonOperationsForControllers.checkTopicOwner(topic, current_user);
         
         model.put("topic", topic);
         model.put("entry", entry);
@@ -128,7 +128,7 @@ public class EntryController {
         Entry entry = this.entryRepo.findById(entryId).get();
         Topic topic = entry.getTopic();
         
-        CommonOperationsForControllers.check_topic_owner(topic, current_user);
+        CommonOperationsForControllers.checkTopicOwner(topic, current_user);
         
         entry.setText(text);
         this.entryRepo.save(entry);
@@ -150,7 +150,7 @@ public class EntryController {
         Entry entry = this.entryRepo.findById(entryId).get();
         Topic topic = entry.getTopic();
         
-        CommonOperationsForControllers.check_topic_owner(topic, current_user);
+        CommonOperationsForControllers.checkTopicOwner(topic, current_user);
         
         model.put("topic", topic);
         model.put("entry", entry);
@@ -168,7 +168,7 @@ public class EntryController {
         Entry entry = this.entryRepo.findById(entryId).get();
         Topic topic = entry.getTopic();
         
-        CommonOperationsForControllers.check_topic_owner(topic, current_user);
+        CommonOperationsForControllers.checkTopicOwner(topic, current_user);
         
         this.entryRepo.delete(entry);
         

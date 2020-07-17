@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.LearningLog.models.Accesses;
 import com.example.LearningLog.models.Topic;
 import com.example.LearningLog.models.User;
 import com.example.LearningLog.repos.TopicRepo;
@@ -19,15 +20,26 @@ public class TopicController {
     private TopicRepo topicRepo;
     
     @GetMapping("/my_topics")
-    public String topics(@AuthenticationPrincipal User user, Map<String, Object> model) {
+    public String my_topics(@AuthenticationPrincipal User user, Map<String, Object> model) {
         Iterable<Topic> topics = this.topicRepo.findByOwnerId(user.getId());
         model.put("topics", topics);
         
         return "topics";
     }
     
+    @GetMapping("/public_topics")
+    public String public_topics(Map<String, Object> model) {
+        Iterable<Topic> topics = this.topicRepo.findByAccess(Accesses.PUBLIC);
+        model.put("topics", topics);
+        
+        return "topics";
+    }
+    
     @GetMapping("/new_topic")
-    public String new_topic() {
+    public String new_topic(Map<String, Object> model) {
+        model.put("PRIVATE", Accesses.PRIVATE);
+        model.put("PUBLIC", Accesses.PUBLIC);
+        
         return "new_topic";
     }
     
@@ -35,9 +47,10 @@ public class TopicController {
     public String add_new_topic(
             @AuthenticationPrincipal User user,
             @RequestParam String title,
+            @RequestParam Accesses access,
             Map<String, Object> model
     ) {
-        Topic new_topic = new Topic(title, user);
+        Topic new_topic = new Topic(title, user, access);
         Topic saved_topic = this.topicRepo.save(new_topic);
         
         return "redirect:/topic/" + saved_topic.getId() + "/entries";
