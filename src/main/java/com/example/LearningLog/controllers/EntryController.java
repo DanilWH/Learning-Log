@@ -24,12 +24,14 @@ public class EntryController {
     @Autowired
     private EntryRepo entryRepo;
 
-    @GetMapping("/topics/{topicId}/entries")
+    @GetMapping("/topic/{topicId}/entries")
     public String entries(
             @PathVariable(value="topicId") Integer topicId,
             @AuthenticationPrincipal User current_user,
             Map<String, Object> model
     ) {
+        /*** Shows a list of the user's entries that are associated with a certain topic. ***/
+        
         Topic topic = this.topicRepo.findById(topicId).get();
         
         CommonOperationsForControllers.check_topic_owner(topic, current_user);
@@ -42,12 +44,17 @@ public class EntryController {
         return "entries";
     }
     
-    @GetMapping("/topics/{topicId}/entries/new_entry")
+    @GetMapping("/topic/{topicId}/entries/new_entry")
     public String new_entry(
             @PathVariable(value="topicId") Integer topicId,
             @AuthenticationPrincipal User current_user,
             Map<String, Object> model
     ) {
+        /*** 
+         * Renders the "New entry" page where the user
+         * can insert a name of the new topic and add it.
+        ***/
+        
         Topic topic = this.topicRepo.findById(topicId).get();
         
         CommonOperationsForControllers.check_topic_owner(topic, current_user);
@@ -57,13 +64,15 @@ public class EntryController {
         return "new_entry";
     }
     
-    @PostMapping("/topics/{topicId}/entries/new_entry")
+    @PostMapping("/topic/{topicId}/entries/new_entry")
     public String add_entry(
             @PathVariable(value="topicId") Integer topicId,
             @AuthenticationPrincipal User current_user,
             @RequestParam String text,
             Map<String, Object> model
     ) {
+        /*** Processes adding a new entry to the database. ***/
+        
         Topic topic = this.topicRepo.findById(topicId).get();
         
         CommonOperationsForControllers.check_topic_owner(topic, current_user);
@@ -73,7 +82,7 @@ public class EntryController {
         Entry new_entry = new Entry(text, topic);
         this.entryRepo.save(new_entry);
         
-        return "redirect:/topics/" + topicId + "/entries";
+        return "redirect:/topic/" + topicId + "/entries";
         
         /**
          * More modern approach:
@@ -89,12 +98,14 @@ public class EntryController {
          */
     }
     
-    @GetMapping("/topics/{topicId}/entries/edit_entry/{entryId}")
+    @GetMapping("/topic/{topicId}/entries/edit_entry/{entryId}")
     public String edit_entry(
             @PathVariable(value="entryId") Long entryId,
             @AuthenticationPrincipal User current_user,
             Map<String, Object> model
     ) {
+        /*** Renders the "Edit entry" page where user can edit their entries. ***/
+        
         Entry entry = this.entryRepo.findById(entryId).get();
         Topic topic = entry.getTopic();
         
@@ -106,12 +117,14 @@ public class EntryController {
         return "edit_entry";
     }
     
-    @PostMapping("/topics/{topicId}/entries/edit_entry/{entryId}")
+    @PostMapping("/topic/{topicId}/entries/edit_entry/{entryId}")
     public String update_entry(
             @PathVariable(value="entryId") Long entryId,
             @AuthenticationPrincipal User current_user,
             @RequestParam String text
     ) {
+        /*** Processes editing a entry and saves the changes in the database. ***/
+        
         Entry entry = this.entryRepo.findById(entryId).get();
         Topic topic = entry.getTopic();
         
@@ -120,15 +133,20 @@ public class EntryController {
         entry.setText(text);
         this.entryRepo.save(entry);
         
-        return "redirect:/topics/" + topic.getId() + "/entries";
+        return "redirect:/topic/" + topic.getId() + "/entries";
     }
     
-    @GetMapping("/topics/{topicId}/entries/delete_entry/{entryId}")
+    @GetMapping("/topic/{topicId}/entries/delete_entry/{entryId}")
     public String delete_entry_confirmation(
             @PathVariable(value="entryId") Long entryId,
             @AuthenticationPrincipal User current_user,
             Map<String, Object> model
     ) {
+        /*** 
+         * Renders the "Delete entry" page where users are
+         * asked if the really want to delete the entry.
+        ***/
+        
         Entry entry = this.entryRepo.findById(entryId).get();
         Topic topic = entry.getTopic();
         
@@ -140,11 +158,13 @@ public class EntryController {
         return "delete";
     }
     
-    @PostMapping("/topics/{topicId}/entries/delete_entry/{entryId}")
+    @PostMapping("/topic/{topicId}/entries/delete_entry/{entryId}")
     public String delete_entry(
             @PathVariable(value="entryId") Long entryId,
             @AuthenticationPrincipal User current_user
     ) {
+        /*** Processes deleting a entry from the database. ***/
+        
         Entry entry = this.entryRepo.findById(entryId).get();
         Topic topic = entry.getTopic();
         
@@ -152,6 +172,6 @@ public class EntryController {
         
         this.entryRepo.delete(entry);
         
-        return "redirect:/topics/" + topic.getId() + "/entries";
+        return "redirect:/topic/" + topic.getId() + "/entries";
     }
 }

@@ -7,13 +7,11 @@
 	<ul>
 		<#list topics as topic>
 			<li>
-				<a href="/topics/${topic.id}/entries">${topic.title}</a>
+				<a href="/topic/${topic.id}/entries">${topic.title}</a>
 			</li>
 		<#else>
 			<li>...No topics have been added yet...</li>
 	    </#list>
     </ul>
-    
-    <a href="/new_topic">Add a new topic</a>
     
 </@base.content>
