@@ -6,7 +6,9 @@
 	
 	<p>Entries:</p>
 	
-	<a href="/topic/${topic.id}/entries/new_entry">Add a new entry</a>
+	<#if topic.owner.username == __user.name>
+		<a href="/topic/${topic.id}/entries/new_entry">Add a new entry</a>
+	</#if>
 	
 	<ul>
 		<#list entries as entry>
@@ -18,10 +20,12 @@
 					   ${line} <br />
 					</#list>
 				</p>
+				<#if topic.owner.username == __user.name>
 					<p>
 						<a href="/topic/${topic.id}/entries/edit_entry/${entry.id}">Edit entry</a> |
 						<a href="/topic/${topic.id}/entries/delete_entry/${entry.id}">Delete entry</a>
 					</p>
+				</#if>
 				<hr />
 			</li>
 		<#else>
