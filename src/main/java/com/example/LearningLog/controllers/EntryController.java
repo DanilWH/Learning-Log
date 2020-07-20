@@ -80,7 +80,7 @@ public class EntryController {
         model.put("topic", topic);
         
         if (text != null && text.trim().isEmpty()) {
-            model.put("message", "Fill the forms correctly!");
+            model.put("message", CommonOperationsForControllers.fieldRequired);
             // the 3 lines of code that are above the if statement are the same
             // as in the add_entry method, we don't want to execute the same algorithm again,
             // so we put the if statement after these 3 lines of code adding "message"

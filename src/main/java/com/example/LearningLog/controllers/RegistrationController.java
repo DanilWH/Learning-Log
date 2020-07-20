@@ -26,19 +26,25 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public String addUser(
-            User user, @RequestParam String repeat_password,
+            User user, @RequestParam String password_confirm,
             Map<String, Object> model
-        ) {
-        User userFromDB = this.userRepo.findByUsername(user.getUsername());
-
-        if (userFromDB != null)
-            model.put("message", "The user already exsists!");
+    ) {
+        String username = user.getUsername();
+        String password = user.getPassword();
         
-        if (user.getPassword().equals(repeat_password) == false)
-            model.put("message", "Your passwords didn't match. Please try again.");
-
-        if (model.containsKey("message")) return "registration";
+        String username_message = CommonOperationsForControllers.isUsernameValid(username, this.userRepo);
+        if (username_message != null) {
+            model.put("username_message", username_message);
+            return "registration";
+        }
         
+        String password_message = CommonOperationsForControllers.isPasswordValid(password, password_confirm);
+        if (password_message != null) {
+            model.put("password_message", password_message);
+            return "registration";
+        }
+        
+        // saving the user into the database.
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.USER));
         this.userRepo.save(user);

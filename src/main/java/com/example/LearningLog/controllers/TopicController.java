@@ -52,7 +52,7 @@ public class TopicController {
             Map<String, Object> model
     ) {
         if (title != null && title.trim().isEmpty()) {
-            model.put("message", "Title can not contain white spaces only!");
+            model.put("message", CommonOperationsForControllers.fieldRequired);
             return new_topic(model);
         }
             
