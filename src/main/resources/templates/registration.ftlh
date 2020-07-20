@@ -14,4 +14,5 @@
         	<p>${message}</p> <!-- add the template checking if the password matches. -->
         </#if>
     </body>
+    
 </@base.content>

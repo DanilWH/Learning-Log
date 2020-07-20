@@ -47,10 +47,19 @@ public class TopicController {
     public String add_new_topic(
             @AuthenticationPrincipal User user,
             @RequestParam String title,
+            @RequestParam String description,
             @RequestParam Accesses access,
             Map<String, Object> model
     ) {
-        Topic new_topic = new Topic(title, user, access);
+        if (title != null && title.trim().isEmpty()) {
+            model.put("message", "Title can not contain white spaces only!");
+            return new_topic(model);
+        }
+            
+        if (description != null && description.trim().isEmpty())
+            description = title;
+        
+        Topic new_topic = new Topic(title, description, user, access);
         Topic saved_topic = this.topicRepo.save(new_topic);
         
         return "redirect:/topic/" + saved_topic.getId() + "/entries";

@@ -2,7 +2,14 @@
 
 <@base.content title="Learning Log">
 
-	<p>Topic: ${topic.title}</p>
+	<h3>${topic.title}</h3>
+	
+	<#assign des_lines = topic.description?split("\n") />
+	<#list des_lines as des_line>
+		${des_line} <br />
+	<#else>
+		...No description...
+	</#list>
 	
 	<p>Entries:</p>
 	

@@ -6,7 +6,15 @@
 	
 	<form action="/new_topic" method="post">
 		<input type="hidden" name="_csrf" value="${_csrf.token}" />
-		<input type="text" name="title" /><br />
+		
+		Title <br />
+		<input type="text" name="title" required /><br />
+		<#if message??>
+			${message} <br />
+		</#if>
+		
+		Description <br />
+		<textarea name="description" cols="80" rows="10"></textarea><br />
 		
 		Accessibility:
 		<input id="private" type="radio" name="access" value="${PRIVATE}" checked="checked" />
