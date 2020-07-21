@@ -45,19 +45,24 @@ public interface CommonOperationsForControllers {
         
         char[] username_chars = username.toCharArray();
         for (int i = 0, len = username_chars.length; i < len; i++) {
+            // if the current symbol is in the range of numbers by ascii. 
             boolean numerics = username_chars[i] > 47 && username_chars[i] < 58;
-            boolean upper_latters = username_chars[i] > 63 && username_chars[i] < 91;
-            boolean lower_latters = (username_chars[i] > 96 && username_chars[i] < 123);
+            // if the current symbol is in the range of upper letters by ascii.
+            boolean upper_letters = username_chars[i] > 64 && username_chars[i] < 91;
+            // if the current symbol is in the range of lower letters by ascii.
+            boolean lower_letters = (username_chars[i] > 96 && username_chars[i] < 123);
+            // if the current symbol is one of the special symbols.
+            boolean special_symbols = username_chars[i] == '.' || username_chars[i] == '+' ||
+                                      username_chars[i] == '-' || username_chars[i] == '_' ||
+                                      username_chars[i] == '@';
+            // is the current symbol valid?
+            boolean valid_symbol = numerics || upper_letters || lower_letters || special_symbols; 
             
-            if (!(numerics || upper_latters || lower_latters ||
-                username_chars[i] == '.' ||
-                username_chars[i] == '+' ||
-                username_chars[i] == '-' ||
-                username_chars[i] == '_'))
-            {
+            // if the current symbol isn't valid then ...
+            if (!valid_symbol)
+                // ... return the appropriate message.
                 return "Enter a valid username. This value may contain only letters,"
                         + "numbers, and @/./+/-/_ characters.";
-            }
         }
         
         // return null as a result if the username is valid.

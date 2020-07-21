@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.LearningLog.models.Entry;
@@ -17,6 +18,7 @@ import com.example.LearningLog.repos.EntryRepo;
 import com.example.LearningLog.repos.TopicRepo;
 
 @Controller
+@RequestMapping("/topic")
 public class EntryController {
     
     @Autowired
@@ -24,7 +26,7 @@ public class EntryController {
     @Autowired
     private EntryRepo entryRepo;
 
-    @GetMapping("/topic/{topicId}/entries")
+    @GetMapping("/{topicId}/entries")
     public String entries(
             @PathVariable(value="topicId") Integer topicId,
             @AuthenticationPrincipal User current_user,
@@ -44,7 +46,7 @@ public class EntryController {
         return "entries";
     }
     
-    @GetMapping("/topic/{topicId}/entries/new_entry")
+    @GetMapping("/{topicId}/entries/new_entry")
     public String new_entry(
             @PathVariable(value="topicId") Integer topicId,
             @AuthenticationPrincipal User current_user,
@@ -64,7 +66,7 @@ public class EntryController {
         return "new_entry";
     }
     
-    @PostMapping("/topic/{topicId}/entries/new_entry")
+    @PostMapping("/{topicId}/entries/new_entry")
     public String add_entry(
             @PathVariable(value="topicId") Integer topicId,
             @AuthenticationPrincipal User current_user,
@@ -108,7 +110,7 @@ public class EntryController {
          */
     }
     
-    @GetMapping("/topic/{topicId}/entries/edit_entry/{entryId}")
+    @GetMapping("/{topicId}/entries/edit_entry/{entryId}")
     public String edit_entry(
             @PathVariable(value="entryId") Long entryId,
             @AuthenticationPrincipal User current_user,
@@ -127,7 +129,7 @@ public class EntryController {
         return "edit_entry";
     }
     
-    @PostMapping("/topic/{topicId}/entries/edit_entry/{entryId}")
+    @PostMapping("/{topicId}/entries/edit_entry/{entryId}")
     public String update_entry(
             @PathVariable(value="entryId") Long entryId,
             @AuthenticationPrincipal User current_user,
@@ -146,7 +148,7 @@ public class EntryController {
         return "redirect:/topic/" + topic.getId() + "/entries";
     }
     
-    @GetMapping("/topic/{topicId}/entries/delete_entry/{entryId}")
+    @GetMapping("/{topicId}/entries/delete_entry/{entryId}")
     public String delete_entry_confirmation(
             @PathVariable(value="entryId") Long entryId,
             @AuthenticationPrincipal User current_user,
@@ -168,7 +170,7 @@ public class EntryController {
         return "delete";
     }
     
-    @PostMapping("/topic/{topicId}/entries/delete_entry/{entryId}")
+    @PostMapping("/{topicId}/entries/delete_entry/{entryId}")
     public String delete_entry(
             @PathVariable(value="entryId") Long entryId,
             @AuthenticationPrincipal User current_user
