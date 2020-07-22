@@ -17,11 +17,12 @@
 		<textarea name="description" cols="80" rows="10"></textarea><br />
 		
 		Accessibility:
-		<input id="private" type="radio" name="access" value="${PRIVATE}" checked="checked" />
-		<label for="private">Private</label>
-		<input id="public" type="radio" name="access" value="${PUBLIC}" />
-		<label for="public">Public</label>
+		<#list accesses as access>
+			<input id="${access}" type="radio" name="access" value="${access}" ${access?contains("PRIVATE")?string("checked", "")}/>
+			<label for="${access}">${access?capitalize}</label>
+		</#list>
 		<br />
+		
 		<button type="submit">Add topic</button>
 	</form>
 

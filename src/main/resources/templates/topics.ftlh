@@ -7,7 +7,14 @@
 	<ul>
 		<#list topics as topic>
 			<li>
-				<a href="/topic/${topic.id}/entries">${topic.title}</a>
+				<!--
+					we show the username of a particular topic if the current
+					user is watching public topics.
+				 -->
+				<#if springMacroRequestContext.getRequestUri() == "/public_topics">
+					<i>u/${topic.owner.username}</i><br />
+				</#if>
+				<b><a href="/topic/${topic.id}/entries">${topic.title}</a></b>
 			</li>
 		<#else>
 			<li>...No topics have been added yet...</li>

@@ -37,8 +37,7 @@ public class TopicController {
     
     @GetMapping("/new_topic")
     public String new_topic(Map<String, Object> model) {
-        model.put("PRIVATE", Accesses.PRIVATE);
-        model.put("PUBLIC", Accesses.PUBLIC);
+        model.put("accesses", Accesses.values());
         
         return "new_topic";
     }
