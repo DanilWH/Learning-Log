@@ -19,6 +19,16 @@
 	</properties>
 
 	<dependencies>
+		
+		<!-- JspTaglibs -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-jsp-api</artifactId>
+		</dependency>
 	
 		<dependency>
 		    <groupId>javax.validation</groupId>

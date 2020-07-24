@@ -18,7 +18,7 @@ import com.example.LearningLog.repos.UserRepo;
 
 @Controller
 @RequestMapping("/admin/users")
-//@PreAuthorize("hasAuthority('ADMIN')")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class UserController {
     @Autowired
     private UserRepo userRepo;
@@ -55,7 +55,6 @@ public class UserController {
         user.setUsername(username);
         user.setPassword(password);
         
-        user.getRoles().clear();
         user.setRoles(roles);
         
         this.userRepo.save(user);
