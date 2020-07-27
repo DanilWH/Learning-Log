@@ -6,6 +6,7 @@
 <html>
 	<head>
 		<title>${title}</title>
+		<link href="/static/style.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
 		<p id="top">
