@@ -1,8 +1,12 @@
 package com.example.LearningLog.controllers;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.LearningLog.models.Entry;
 import com.example.LearningLog.models.Topic;
@@ -25,6 +30,9 @@ public class EntryController {
     private TopicRepo topicRepo;
     @Autowired
     private EntryRepo entryRepo;
+    
+    @Value("${upload.path}")
+    private String uploadPath;
 
     @GetMapping("/{topicId}/entries")
     public String entries(
@@ -71,8 +79,9 @@ public class EntryController {
             @PathVariable(value="topicId") Integer topicId,
             @AuthenticationPrincipal User current_user,
             @RequestParam String text,
+            @RequestParam MultipartFile file,
             Map<String, Object> model
-    ) {
+    ) throws IOException {
         /*** Processes adding a new entry to the database. ***/
         
         Topic topic = this.topicRepo.findById(topicId).get();
@@ -90,8 +99,28 @@ public class EntryController {
             return "new_entry";
         }
         
-        // create the new entry and save it into the database.
+        // create the new entry object.
         Entry new_entry = new Entry(text, topic);
+        
+        if (file != null && !file.isEmpty()) {
+            // make the directory if it doesn't exist.
+            File uploadDir = new File(this.uploadPath);
+
+            if (!uploadDir.exists())
+                uploadDir.mkdirs();
+            
+            // create a unique name for the file.
+            String uuidFilename = UUID.randomUUID().toString();
+            String resultFilename = uuidFilename + "." + file.getOriginalFilename();
+            
+            // store it on the server by the path we pointed in application.properties.
+            file.transferTo(new File(this.uploadPath + resultFilename));
+            
+            // store the name of the file to each entry.
+            new_entry.setFilename(resultFilename);
+        }
+        
+        // save the entry into the database.
         this.entryRepo.save(new_entry);
         
         return "redirect:/topic/" + topicId + "/entries";

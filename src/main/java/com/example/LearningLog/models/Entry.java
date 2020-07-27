@@ -42,6 +42,8 @@ public class Entry {
     @Type(type = "text")
     private String text;
     
+    private String filename;
+    
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "topic_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -71,6 +73,10 @@ public class Entry {
         return this.text;
     }
     
+    public String getFilename() {
+        return this.filename;
+    }
+    
     public Topic getTopic() {
         return this.topic;
     }
@@ -85,6 +91,10 @@ public class Entry {
     
     public void setText(String text) {
         this.text = text;
+    }
+    
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
     
     public void setTopic(Topic topic) {

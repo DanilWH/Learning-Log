@@ -6,12 +6,11 @@
 	<p><a href="/topic/${topic.id}/entries">${topic.title}</a></p>
 	<p>Add a new entry:</p>
 	
-	<form action="/topic/${topic.id}/entries/new_entry" method="POST">
+	<form action="/topic/${topic.id}/entries/new_entry" method="POST" enctype="multipart/form-data">
 		<input type="hidden" name="_csrf" value="${_csrf.token}" />
 		<textarea name="text" cols="80" rows="10" required="required"></textarea><br />
-		<#if message??>
-			${message} <br />
-		</#if>
+		${message?ifExists} <br />
+		<div><input type="file" name="file" /></div>
 		<button type="submit">Add entry</button>
 	</form>
 	
