@@ -3,6 +3,7 @@ package com.example.LearningLog.controllers;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -101,13 +102,6 @@ public class EntryController {
         // create the new entry object.
         Entry new_entry = new Entry(text, topic);
 
-        /*
-         * Because the form like <input type="file" multiple /> returns at least
-         * 1 object even if it's empty we have to check if the first element in the List
-         * contains an empty value, if so then that means the user didn't choose any file
-         * so we clear the List as a logical sequence.
-         */
-        if (files.get(0).isEmpty()) files.clear();
         CommonOperationsForControllers.uploadFilesIfExist(new_entry, files, this.uploadPath);
         
         // save the entry into the database.
@@ -154,7 +148,7 @@ public class EntryController {
             @AuthenticationPrincipal User current_user,
             @RequestParam List<MultipartFile> files,
             @RequestParam String text,
-            @RequestParam String[] onDelete
+            @RequestParam Optional<String[]> onDelete
     ) throws IOException {
         /*** Processes editing a entry and saves the changes in the database. ***/
         
@@ -163,7 +157,8 @@ public class EntryController {
         
         CommonOperationsForControllers.checkTopicOwner(topic, current_user);
         
-        CommonOperationsForControllers.deleteFilesFromServerIfExist(entry, onDelete, this.uploadPath);
+        if (onDelete.isPresent())
+            CommonOperationsForControllers.deleteFilesFromServerIfExist(entry, onDelete.get(), this.uploadPath);
         CommonOperationsForControllers.uploadFilesIfExist(entry, files, this.uploadPath);
         
         entry.setText(text);

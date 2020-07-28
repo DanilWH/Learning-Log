@@ -115,26 +115,33 @@ public interface CommonOperationsForControllers {
          * then this function doesn't do anything as well.
         ***/
         
-        if (files != null && files.size() != 0) {
-            // make the directory if it doesn't exist.
-            File uploadDir = new File(uploadPath);
+        /*
+         * Because the forms like <input type="file" multiple /> return at least
+         * 1 object even if it's empty we have to check if the first element
+         * contains an empty value, if so then that means the user didn't select any file
+         * so we make sure if the user selected at least one file.
+         */
+        if (files != null && files.get(0).isEmpty()) return;
+        
+        // but if the user selected at least one file then we:
+        // make the directory if it doesn't exist.
+        File uploadDir = new File(uploadPath);
 
-            if (!uploadDir.exists())
-                uploadDir.mkdirs();
+        if (!uploadDir.exists())
+            uploadDir.mkdirs();
+        
+        // go through the list of files.
+        for (MultipartFile file : files) {
+            // create a unique name for the current file.
+            String uuidFilename = UUID.randomUUID().toString();
+            String resultFilename = uuidFilename + "." + file.getOriginalFilename();
             
-            // go through the list of files.
-            for (MultipartFile file : files) {
-                // create a unique name for the current file.
-                String uuidFilename = UUID.randomUUID().toString();
-                String resultFilename = uuidFilename + "." + file.getOriginalFilename();
-                
-                // store store the current file on the server in the path we
-                // pointed in application.properties.
-                file.transferTo(new File(uploadPath + resultFilename));
-                
-                // store the name of the current file to the list of the new entry.
-                entry.getFilenames().add(resultFilename);
-            }
+            // store store the current file on the server in the path we
+            // pointed in application.properties.
+            file.transferTo(new File(uploadPath + resultFilename));
+            
+            // store the name of the current file to the list of the new entry.
+            entry.getFilenames().add(resultFilename);
         }
     }
     
@@ -147,9 +154,10 @@ public interface CommonOperationsForControllers {
          * and form the server directory.
         ***/
         
-        if (entry != null && entry.getFilenames().isEmpty())
-            return;
+        // we don't need to do anything if the current entry doesn't contain files.
+        if (entry != null && entry.getFilenames().isEmpty()) return;
         
+        // but if the entry contain at least one file then we have to delete it.
         for (String filename : filesList) {
             // remove the files from the entry in the repository.
             entry.getFilenames().remove(filename);
