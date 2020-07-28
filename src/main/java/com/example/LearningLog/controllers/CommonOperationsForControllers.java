@@ -1,9 +1,16 @@
 package com.example.LearningLog.controllers;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.LearningLog.models.Accesses;
+import com.example.LearningLog.models.Entry;
 import com.example.LearningLog.models.Topic;
 import com.example.LearningLog.models.User;
 import com.example.LearningLog.repos.UserRepo;
@@ -95,5 +102,61 @@ public interface CommonOperationsForControllers {
         
         // return null as a result if the password is valid.
         return null;
+    }
+    
+    public static void uploadFilesIfExist(
+            Entry entry,
+            List<MultipartFile> files,
+            String uploadPath
+    ) throws IOException {
+        /*** 
+         * Uploads the user's chosen files
+         * but if the user didn't choose any file
+         * then this function doesn't do anything as well.
+        ***/
+        
+        if (files != null && files.size() != 0) {
+            // make the directory if it doesn't exist.
+            File uploadDir = new File(uploadPath);
+
+            if (!uploadDir.exists())
+                uploadDir.mkdirs();
+            
+            // go through the list of files.
+            for (MultipartFile file : files) {
+                // create a unique name for the current file.
+                String uuidFilename = UUID.randomUUID().toString();
+                String resultFilename = uuidFilename + "." + file.getOriginalFilename();
+                
+                // store store the current file on the server in the path we
+                // pointed in application.properties.
+                file.transferTo(new File(uploadPath + resultFilename));
+                
+                // store the name of the current file to the list of the new entry.
+                entry.getFilenames().add(resultFilename);
+            }
+        }
+    }
+    
+    public static void deleteFilesFromServerIfExist(
+            Entry entry, String[] filesList, String uploadPath
+    ) {
+        /*** 
+         * Removes the selected files from
+         * the entry entity in the repository
+         * and form the server directory.
+        ***/
+        
+        if (entry != null && entry.getFilenames().isEmpty())
+            return;
+        
+        for (String filename : filesList) {
+            // remove the files from the entry in the repository.
+            entry.getFilenames().remove(filename);
+        
+            // remove the files from the server directory.
+            File removingFile = new File(uploadPath + filename);
+            removingFile.delete();
+        }
     }
 }

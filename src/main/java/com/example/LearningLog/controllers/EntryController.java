@@ -1,10 +1,8 @@
 package com.example.LearningLog.controllers;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -103,27 +101,7 @@ public class EntryController {
         // create the new entry object.
         Entry new_entry = new Entry(text, topic);
         
-        if (files != null && files.size() != 0) {
-            // make the directory if it doesn't exist.
-            File uploadDir = new File(this.uploadPath);
-
-            if (!uploadDir.exists())
-                uploadDir.mkdirs();
-            
-            // go through the list of files.
-            for (MultipartFile file : files) {
-                // create a unique name for the current file.
-                String uuidFilename = UUID.randomUUID().toString();
-                String resultFilename = uuidFilename + "." + file.getOriginalFilename();
-                
-                // store store the current file on the server in the path we
-                // pointed in application.properties.
-                file.transferTo(new File(this.uploadPath + resultFilename));
-                
-                // store the name of the current file to the list of the new entry.
-                new_entry.getFilenames().add(resultFilename);
-            }
-        }
+        CommonOperationsForControllers.uploadFilesIfExist(new_entry, files, this.uploadPath);
         
         // save the entry into the database.
         this.entryRepo.save(new_entry);
@@ -167,14 +145,19 @@ public class EntryController {
     public String update_entry(
             @PathVariable(value="entryId") Long entryId,
             @AuthenticationPrincipal User current_user,
-            @RequestParam String text
-    ) {
+            @RequestParam List<MultipartFile> files,
+            @RequestParam String text,
+            @RequestParam String[] onDelete
+    ) throws IOException {
         /*** Processes editing a entry and saves the changes in the database. ***/
         
         Entry entry = this.entryRepo.findById(entryId).get();
         Topic topic = entry.getTopic();
         
         CommonOperationsForControllers.checkTopicOwner(topic, current_user);
+        
+        CommonOperationsForControllers.deleteFilesFromServerIfExist(entry, onDelete, this.uploadPath);
+        CommonOperationsForControllers.uploadFilesIfExist(entry, files, this.uploadPath);
         
         entry.setText(text);
         this.entryRepo.save(entry);
@@ -215,6 +198,11 @@ public class EntryController {
         Topic topic = entry.getTopic();
         
         CommonOperationsForControllers.checkTopicOwner(topic, current_user);
+        
+        // Convert List<String> -> String[]
+        String[] deletingFilesList = entry.getFilenames().toArray(new String[0]);
+        CommonOperationsForControllers.deleteFilesFromServerIfExist(
+                entry, deletingFilesList, this.uploadPath);
         
         this.entryRepo.delete(entry);
         

@@ -11,14 +11,19 @@
 			
 		<input type="hidden" name="_csrf" value="${_csrf.token}" />
 		<textarea name="text" rows="10" cols="80">${entry.text}</textarea><br />
-		<#if entry.filename??>
-			<img src="/img/${entry.filename}" /><br />
-			<label><input type="checkbox" name="onDelete" /> Delete the file</label>
-			<br />or<br />
-			change the file to another:<br />
+		<#if entry.filenames??>
+			<#list entry.filenames as filename>
+				<div>
+					<img src="/img/${filename}" style="width: 150px; height: auto;" /><br />
+					<label>
+						<input type="checkbox" name="onDelete" value="${filename}" />
+						Delete ${filename}
+					</label>
+				</div>
+			</#list>
 		</#if>
-		<input type="file" name="file" />
-		<button name="submit">Save changes</button>
+		<input type="file" name="files" multiple />
+		<div><button name="submit">Save changes</button></div>
 		
 	</form>
 
