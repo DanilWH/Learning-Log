@@ -10,7 +10,7 @@
 		<input type="hidden" name="_csrf" value="${_csrf.token}" />
 		<textarea name="text" cols="80" rows="10" required="required"></textarea><br />
 		${message?ifExists} <br />
-		<div><input type="file" name="file" /></div>
+		<div><input type="file" name="files" multiple="multiple" /></div>
 		<button type="submit">Add entry</button>
 	</form>
 	

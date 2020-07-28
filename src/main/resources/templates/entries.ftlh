@@ -29,8 +29,10 @@
 					</#list>
 				</p>
 				
-				<#if entry.filename??>
-					<img src="/img/${entry.filename}" />
+				<#if entry.filenames??>
+					<#list entry.filenames as filename>
+						<img src="/img/${filename}" />
+					</#list>
 				</#if>
 				
 				<#if topic.owner.username == __user.name>

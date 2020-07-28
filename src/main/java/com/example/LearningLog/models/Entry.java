@@ -2,7 +2,10 @@ package com.example.LearningLog.models;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -42,7 +45,8 @@ public class Entry {
     @Type(type = "text")
     private String text;
     
-    private String filename;
+    @ElementCollection
+    private List<String> filenames;
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "topic_id", nullable = false)
@@ -57,6 +61,7 @@ public class Entry {
         this.topic = topic;
         
         this.dateTime = LocalDateTime.now();
+        this.filenames = new ArrayList<String>();
     }
     
     public Long getId() {
@@ -73,8 +78,8 @@ public class Entry {
         return this.text;
     }
     
-    public String getFilename() {
-        return this.filename;
+    public List<String> getFilenames() {
+        return this.filenames;
     }
     
     public Topic getTopic() {
@@ -93,8 +98,8 @@ public class Entry {
         this.text = text;
     }
     
-    public void setFilename(String filename) {
-        this.filename = filename;
+    public void setFilenames(List<String> filenames) {
+        this.filenames = filenames;
     }
     
     public void setTopic(Topic topic) {

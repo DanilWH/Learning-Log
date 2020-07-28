@@ -2,6 +2,7 @@ package com.example.LearningLog.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -79,7 +80,7 @@ public class EntryController {
             @PathVariable(value="topicId") Integer topicId,
             @AuthenticationPrincipal User current_user,
             @RequestParam String text,
-            @RequestParam MultipartFile file,
+            @RequestParam List<MultipartFile> files,
             Map<String, Object> model
     ) throws IOException {
         /*** Processes adding a new entry to the database. ***/
@@ -102,22 +103,26 @@ public class EntryController {
         // create the new entry object.
         Entry new_entry = new Entry(text, topic);
         
-        if (file != null && !file.isEmpty()) {
+        if (files != null && files.size() != 0) {
             // make the directory if it doesn't exist.
             File uploadDir = new File(this.uploadPath);
 
             if (!uploadDir.exists())
                 uploadDir.mkdirs();
             
-            // create a unique name for the file.
-            String uuidFilename = UUID.randomUUID().toString();
-            String resultFilename = uuidFilename + "." + file.getOriginalFilename();
-            
-            // store it on the server by the path we pointed in application.properties.
-            file.transferTo(new File(this.uploadPath + resultFilename));
-            
-            // store the name of the file to each entry.
-            new_entry.setFilename(resultFilename);
+            // go through the list of files.
+            for (MultipartFile file : files) {
+                // create a unique name for the current file.
+                String uuidFilename = UUID.randomUUID().toString();
+                String resultFilename = uuidFilename + "." + file.getOriginalFilename();
+                
+                // store store the current file on the server in the path we
+                // pointed in application.properties.
+                file.transferTo(new File(this.uploadPath + resultFilename));
+                
+                // store the name of the current file to the list of the new entry.
+                new_entry.getFilenames().add(resultFilename);
+            }
         }
         
         // save the entry into the database.
