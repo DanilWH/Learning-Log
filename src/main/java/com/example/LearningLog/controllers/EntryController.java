@@ -100,7 +100,14 @@ public class EntryController {
         
         // create the new entry object.
         Entry new_entry = new Entry(text, topic);
-        
+
+        /*
+         * Because the form like <input type="file" multiple /> returns at least
+         * 1 object even if it's empty we have to check if the first element in the List
+         * contains an empty value, if so then that means the user didn't choose any file
+         * so we clear the List as a logical sequence.
+         */
+        if (files.get(0).isEmpty()) files.clear();
         CommonOperationsForControllers.uploadFilesIfExist(new_entry, files, this.uploadPath);
         
         // save the entry into the database.
