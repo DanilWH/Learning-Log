@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -62,5 +63,42 @@ public class TopicController {
         Topic saved_topic = this.topicRepo.save(new_topic);
         
         return "redirect:/topic/" + saved_topic.getId() + "/entries";
+    }
+    
+    @GetMapping("/edit_topic/{topicId}")
+    public String edit_topic(
+            @PathVariable Integer topicId,
+            @AuthenticationPrincipal User current_user,
+            Map<String, Object> model
+    ) {
+        Topic topic = this.topicRepo.findById(topicId).get();
+        
+        CommonOperationsForControllers.checkTopicOwner(topic, current_user);
+        
+        model.put("topic", topic);
+        model.put("accesses", Accesses.values());
+        
+        return "edit_topic";
+    }
+    
+    @PostMapping("/edit_topic/{topicId}")
+    public String update_topic(
+            @AuthenticationPrincipal User current_user,
+            @PathVariable Integer topicId,
+            @RequestParam String title,
+            @RequestParam String description,
+            @RequestParam Accesses access
+    ) {
+        Topic topic = this.topicRepo.findById(topicId).get();
+        
+        CommonOperationsForControllers.checkTopicOwner(topic, current_user);
+        
+        topic.setTitle(title);
+        topic.setDescription(description);
+        topic.setAccess(access);
+        
+        this.topicRepo.save(topic);
+        
+        return "redirect:/topic/" + topicId + "/entries";
     }
 }

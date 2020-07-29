@@ -7,9 +7,14 @@
 	<#assign des_lines = topic.description?split("\n") />
 	<#list des_lines as des_line>
 		${des_line} <br />
-	<#else>
-		...No description...
 	</#list>
+	
+	<#if topic.owner.username == __user.name>
+		<p>
+			<a href="/edit_topic/${topic.id}">Edit topic</a> |
+			<a href="/delete_topic/${topic.id}">Delete topic</a>
+		</p>
+	</#if>
 	
 	<p>Entries:</p>
 	
