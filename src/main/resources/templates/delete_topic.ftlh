@@ -1,4 +1,5 @@
-<#import "/parts/base.ftlh" as base>
+<#import "/parts/base.ftlh" as base />
+<#import "/parts/common.ftlh" as common />
 
 <@base.content title="Delete topic - Learning Log">
 
@@ -11,13 +12,8 @@
 		all entries and files.)
 	</p>
 	
-	<form action="/delete_topic/${topic.id}" method="post">
-		<input type="hidden" name="_csrf" value="${_csrf.token}" />
-		<button name="submit">Yes</button>
-	</form>
-	
-	<form action="/topic/${topic.id}/entries" method="get">
-		<button name="submit">No</button>
-	</form>
+	<@common.delete_confirm
+		url_yes_case="/delete_topic/${topic.id}"
+		url_no_case="/topic/${topic.id}/entries" />
 
 </@base.content>

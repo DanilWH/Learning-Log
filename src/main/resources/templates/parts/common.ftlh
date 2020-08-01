@@ -21,3 +21,16 @@
 </form>
 
 </#macro>
+
+<#macro delete_confirm url_yes_case url_no_case>
+
+<form action="${url_yes_case}" method="post">
+	<input type="hidden" name="_csrf" value="${_csrf.token}" />
+	<button name="submit">Yes</button>
+</form>
+
+<form action="${url_no_case}" method="get">
+	<button name="submit">No</button>
+</form>
+
+</#macro>
