@@ -18,7 +18,7 @@ import org.hibernate.annotations.Type;
 public class Topic {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private Integer id;
+    private Long id;
     
     @Size(max = 200)
     private String title;
@@ -44,7 +44,7 @@ public class Topic {
         this.access = access;
     }
     
-    public Integer getId() {
+    public Long getId() {
         return this.id;
     }
     
@@ -64,7 +64,7 @@ public class Topic {
         return this.owner;
     }
     
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
     

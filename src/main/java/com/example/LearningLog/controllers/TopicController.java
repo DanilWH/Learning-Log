@@ -75,7 +75,7 @@ public class TopicController {
     
     @GetMapping("/edit_topic/{topicId}")
     public String edit_topic(
-            @PathVariable Integer topicId,
+            @PathVariable Long topicId,
             @AuthenticationPrincipal User current_user,
             Map<String, Object> model
     ) {
@@ -92,7 +92,7 @@ public class TopicController {
     @PostMapping("/edit_topic/{topicId}")
     public String update_topic(
             @AuthenticationPrincipal User current_user,
-            @PathVariable Integer topicId,
+            @PathVariable Long topicId,
             @RequestParam String title,
             @RequestParam String description,
             @RequestParam Accesses access
@@ -112,7 +112,7 @@ public class TopicController {
     
     @GetMapping("/delete_topic/{topicId}")
     public String delete_topic_confirmation(
-            @PathVariable Integer topicId,
+            @PathVariable Long topicId,
             @AuthenticationPrincipal User current_user,
             Map<String, Object> model
     ) {
@@ -127,7 +127,7 @@ public class TopicController {
     
     @PostMapping("/delete_topic/{topicId}")
     public String delete_topic(
-            @PathVariable Integer topicId,
+            @PathVariable Long topicId,
             @AuthenticationPrincipal User current_user
     ) {
         Topic topic = this.topicRepo.findById(topicId).get();

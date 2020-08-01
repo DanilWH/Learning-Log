@@ -36,7 +36,7 @@ public class EntryController {
 
     @GetMapping("/{topicId}/entries")
     public String entries(
-            @PathVariable(value="topicId") Integer topicId,
+            @PathVariable(value="topicId") Long topicId,
             @AuthenticationPrincipal User current_user,
             Map<String, Object> model
     ) {
@@ -56,7 +56,7 @@ public class EntryController {
     
     @GetMapping("/{topicId}/entries/new_entry")
     public String new_entry(
-            @PathVariable(value="topicId") Integer topicId,
+            @PathVariable(value="topicId") Long topicId,
             @AuthenticationPrincipal User current_user,
             Map<String, Object> model
     ) {
@@ -76,7 +76,7 @@ public class EntryController {
     
     @PostMapping("/{topicId}/entries/new_entry")
     public String add_entry(
-            @PathVariable(value="topicId") Integer topicId,
+            @PathVariable(value="topicId") Long topicId,
             @AuthenticationPrincipal User current_user,
             @RequestParam String text,
             @RequestParam List<MultipartFile> files,
