@@ -3,6 +3,7 @@ package com.example.LearningLog.controllers;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,14 +12,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.LearningLog.models.Accesses;
+import com.example.LearningLog.models.Entry;
 import com.example.LearningLog.models.Topic;
 import com.example.LearningLog.models.User;
+import com.example.LearningLog.repos.EntryRepo;
 import com.example.LearningLog.repos.TopicRepo;
 
 @Controller
 public class TopicController {
+    @Value("${upload.path}")
+    private String uploadPath;
+    
     @Autowired
     private TopicRepo topicRepo;
+    @Autowired
+    private EntryRepo entryRepo;
     
     @GetMapping("/my_topics")
     public String my_topics(@AuthenticationPrincipal User user, Map<String, Object> model) {
@@ -100,5 +108,39 @@ public class TopicController {
         this.topicRepo.save(topic);
         
         return "redirect:/topic/" + topicId + "/entries";
+    }
+    
+    @GetMapping("/delete_topic/{topicId}")
+    public String delete_topic_confirmation(
+            @PathVariable Integer topicId,
+            @AuthenticationPrincipal User current_user,
+            Map<String, Object> model
+    ) {
+        Topic topic = this.topicRepo.findById(topicId).get();
+        
+        CommonOperationsForControllers.checkTopicOwner(topic, current_user);
+        
+        model.put("topic", topic);
+        
+        return "delete_topic";
+    }
+    
+    @PostMapping("/delete_topic/{topicId}")
+    public String delete_topic(
+            @PathVariable Integer topicId,
+            @AuthenticationPrincipal User current_user
+    ) {
+        Topic topic = this.topicRepo.findById(topicId).get();
+        
+        CommonOperationsForControllers.checkTopicOwner(topic, current_user);
+        
+        // delete all files related to the topic from the server.
+        Iterable<Entry> entries = this.entryRepo.findByTopicId(topicId);
+        for (Entry entry : entries)
+            CommonOperationsForControllers.deleteFilesFromServerIfExist(entry, this.uploadPath);
+        
+        this.topicRepo.delete(topic);
+        
+        return "redirect:/my_topics";
     }
 }

@@ -186,7 +186,7 @@ public class EntryController {
         model.put("topic", topic);
         model.put("entry", entry);
         
-        return "delete";
+        return "delete_entry";
     }
     
     @PostMapping("/{topicId}/entries/delete_entry/{entryId}")
@@ -201,10 +201,7 @@ public class EntryController {
         
         CommonOperationsForControllers.checkTopicOwner(topic, current_user);
         
-        // Convert List<String> -> String[]
-        String[] deletingFilesList = entry.getFilenames().toArray(new String[0]);
-        CommonOperationsForControllers.deleteFilesFromServerIfExist(
-                entry, deletingFilesList, this.uploadPath);
+        CommonOperationsForControllers.deleteFilesFromServerIfExist(entry, this.uploadPath);
         
         this.entryRepo.delete(entry);
         

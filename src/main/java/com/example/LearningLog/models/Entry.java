@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,6 +18,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
@@ -46,6 +49,10 @@ public class Entry {
     private String text;
     
     @ElementCollection
+    @CollectionTable(name = "entry_filenames", joinColumns = @JoinColumn(name = "entry_id")) // choose the name of the DB table storing the List<>
+    @JoinColumn(name = "entry_id")            // name of the @Id column of this entity
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Cascade(value={CascadeType.ALL})
     private List<String> filenames;
     
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

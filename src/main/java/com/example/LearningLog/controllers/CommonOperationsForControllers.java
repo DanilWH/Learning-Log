@@ -167,4 +167,14 @@ public interface CommonOperationsForControllers {
             removingFile.delete();
         }
     }
+    
+    public static void deleteFilesFromServerIfExist(Entry entry, String uploadPath) {
+        /*** 
+         * This is a prototype of the function
+         * deleteFilesFromServerIfExist(Entry entry, String[] filesList, String uploadPath)
+         * but a little bit more readable.
+         */
+        String[] filesList = entry.getFilenames().toArray(new String[0]);
+        deleteFilesFromServerIfExist(entry, filesList, uploadPath);
+    }
 }
