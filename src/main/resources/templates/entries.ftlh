@@ -1,4 +1,5 @@
 <#import "/parts/base.ftlh" as base>
+<#include "/parts/user_security.ftlh" />
 
 <@base.content title="Learning Log">
 
@@ -9,7 +10,7 @@
 		${des_line} <br />
 	</#list>
 	
-	<#if topic.owner.username == __user.name>
+	<#if topic.owner.username == user.getUsername()>
 		<p>
 			<a href="/edit_topic/${topic.id}">Edit topic</a> |
 			<a href="/delete_topic/${topic.id}">Delete topic</a>
@@ -18,7 +19,7 @@
 	
 	<p>Entries:</p>
 	
-	<#if topic.owner.username == __user.name>
+	<#if topic.owner.username == user.getUsername()>
 		<a href="/topic/${topic.id}/entries/new_entry">Add a new entry</a>
 	</#if>
 	
@@ -40,7 +41,7 @@
 					</#list>
 				</#if>
 				
-				<#if topic.owner.username == __user.name>
+				<#if topic.owner.username == user.getUsername()>
 					<p>
 						<a href="/topic/${topic.id}/entries/edit_entry/${entry.id}">Edit entry</a> |
 						<a href="/topic/${topic.id}/entries/delete_entry/${entry.id}">Delete entry</a>

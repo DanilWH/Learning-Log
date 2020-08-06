@@ -9,16 +9,18 @@
 		<link href="/static/style.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
+		<#include "user_security.ftlh" />
+		
 		<p id="top">
 			<a href="/">Learning Log</a> - 
 			<a href="/public_topics">Public topics</a> -
 			<a href="/my_topics">My topics</a> -
 			
-			<#if __user??>
-			    Hello, ${__user.name}.
-			    <@security.authorize  access="hasAuthority('ADMIN')">
+			<#if user??>
+			    Hello, ${user.getUsername()}.
+			    <#if user.isAdmin()>
 			    	- <a href="/admin/users">Users</a>
-				</@security.authorize>
+				</#if>
 			    <form name="logoutForm" action="/logout" method="post">
 					<input type="hidden" name="_csrf" value="${_csrf.token}" />
 				    <input type="submit" value="Log out"/>

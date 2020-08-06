@@ -39,6 +39,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING) // we want the enum is stored as a string.
     private Set<Role> roles;
 
+    public boolean isAdmin() {
+        return roles.contains(Role.ADMIN);
+    }
+    
     public Long getId() {
         return this.id;
     }
