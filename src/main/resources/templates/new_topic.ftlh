@@ -3,7 +3,7 @@
 
 <@base.content title="Learning Log">
 
-	<p>Add a new topic:</p>
+	<h5 class="mb-3">Add a new topic:</h5>
 	
 	<@common.topic_form url="/new_topic" checked_access="PRIVATE" />
 

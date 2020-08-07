@@ -2,23 +2,34 @@
 
 <@base.content title="Topics - Learning Log">
     
-	<p>Topics:</p>
+	<h5 class="mb-4">Topics:</h5>
 	
-	<ul>
+	<div class="list-group">
 		<#list topics as topic>
-			<li>
+			<a href="/topic/${topic.id}/entries"
+			   class="list-group-item list-group-item-action">
+				<div class="d-flex w-100 justify-content-between">
+					<h5 class="mb-1">${topic.title}</h5>
+					<small class="text-muted">3 days ago</small>
+				</div>
+				<p class="mb-1">
+					<#assign des_lines = topic.description?split("\n") />
+					<#list des_lines as des_line>
+						${des_line} <br />
+					</#list>
+				</p>
 				<!--
 					we show the username of a particular topic if the current
 					user is watching public topics.
 				 -->
 				<#if springMacroRequestContext.getRequestUri() == "/public_topics">
-					<i>u/${topic.owner.username}</i><br />
+					<small class="text-muted">u/${topic.owner.username}</small>
 				</#if>
-				<b><a href="/topic/${topic.id}/entries">${topic.title}</a></b>
-			</li>
+			</a>
 		<#else>
-			<li>...No topics have been added yet...</li>
+			...No topics have been added yet...
 	    </#list>
-    </ul>
-    
+	</div>
+	
+	
 </@base.content>

@@ -3,7 +3,7 @@
 
 <@base.content title="Delete entry - Learning Log">
 
-	<p>Delete the entry</p>
+	<h5>Delete the entry</h5>
 	
 	<p>
 		Are you sure you want to delete the entry of the

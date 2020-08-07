@@ -3,7 +3,7 @@
 
 <@base.content title="Edit topic - Learning Log">
 
-	<p>Edit the existing topic:</p>
+	<h5 class="mb-4">Edit the existing topic:</h5>
 	
 	<@common.topic_form url="/edit_topic/${topic.id}" checked_access="${topic.access}" />
 

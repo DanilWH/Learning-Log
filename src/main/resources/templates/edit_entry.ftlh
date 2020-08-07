@@ -2,28 +2,40 @@
 
 <@base.content title="Edit entry - Learning Log">
 
-	<p><a href="/topic/${topic.id}/entries">${topic.title}</a></p>
-	
-	<p>Edit entry:</p>
+	<h5 class="mb-4">Edit entry:</h5>
 	
 	<form action="/topic/${topic.id}/entries/edit_entry/${entry.id}"
 			method="POST" enctype="multipart/form-data">
-			
 		<input type="hidden" name="_csrf" value="${_csrf.token}" />
-		<textarea name="text" rows="10" cols="80">${entry.text}</textarea><br />
+		
+		<div class="form group">
+			<textarea name="text" rows="5" class="form-control">${entry.text}</textarea><br />
+		</div>
 		<#if entry.filenames??>
-			<#list entry.filenames as filename>
-				<div>
-					<img src="/img/${filename}" style="width: 150px; height: auto;" /><br />
-					<label>
-						<input type="checkbox" name="onDelete" value="${filename}" />
-						Delete ${filename}
-					</label>
-				</div>
-			</#list>
+			<div class="card-columns">
+				<#list entry.filenames as filename>
+					<div class="card">
+						<img src="/img/${filename}" class="rounded card-img-top"  /><br />
+						<div class="card-footer">
+							<div class="custom-control custom-checkbox">
+								<input id="${filename}" type="checkbox" name="onDelete"
+									   value="${filename}" class="custom-control-input" />
+								<label for="${filename}" class="custom-control-label">Delete ${filename}</label>
+							</div>
+						</div>
+					</div>
+				</#list>
+			</div>
 		</#if>
-		<input type="file" name="files" multiple />
-		<div><button name="submit">Save changes</button></div>
+		
+		<div class="form-group">
+			<div class="custom-file">
+				<input id="files" type="file" name="files" multiple class="custom-file-input" />
+				<label for="files" class="custom-file-label">Choose files</label>
+			</div>
+		</div>
+		
+		<div><button name="submit" class="btn btn-primary">Save changes</button></div>
 		
 	</form>
 

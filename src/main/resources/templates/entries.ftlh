@@ -12,47 +12,45 @@
 	
 	<#if topic.owner.username == user.getUsername()>
 		<p>
-			<a href="/edit_topic/${topic.id}">Edit topic</a> |
-			<a href="/delete_topic/${topic.id}">Delete topic</a>
+			<div class="btn-group" role="group" aria-label="Basic example">
+				<a href="/edit_topic/${topic.id}" class="btn btn-secondary btn-sm">Edit topic</a>
+				<a href="/delete_topic/${topic.id}" class="btn btn-danger btn-sm">Delete topic</a>
+			</div>
 		</p>
 	</#if>
 	
-	<p>Entries:</p>
-	
 	<#if topic.owner.username == user.getUsername()>
-		<a href="/topic/${topic.id}/entries/new_entry">Add a new entry</a>
+		<a href="/topic/${topic.id}/entries/new_entry" class="btn btn-primary">Add a new entry</a>
 	</#if>
 	
-	<ul>
 		<#list entries as entry>
-			<li>
-				<i>${entry.dateTime}</i>
-				
-				<p>
-					<#assign lines = entry.text?split("\n") />
-					<#list lines as line>
-					   ${line} <br />
-					</#list>
-				</p>
-				
+			<div class="card my-3">
+				<h5 class="card-header">${entry.dateTime}</h5>
+				<div class="card-body">
+					<p class="card-text">
+						<#assign lines = entry.text?split("\n") />
+						<#list lines as line>
+						   ${line} <br />
+						</#list>
+					</p>
+					
+					<#if topic.owner.username == user.getUsername()>
+						<div class="btn-group" role="group" aria-label="Basic example">
+							<a href="/topic/${topic.id}/entries/edit_entry/${entry.id}" class="btn btn-secondary btn-sm">Edit entry</a>
+							<a href="/topic/${topic.id}/entries/delete_entry/${entry.id}" class="btn btn-danger btn-sm">Delete entry</a>
+						</div>
+					</#if>
+				</div>
 				<#if entry.filenames??>
 					<#list entry.filenames as filename>
-						<img src="/img/${filename}" />
+						<img src="/img/${filename}" class="card-img-bottom px-3 pb-3" />
 					</#list>
 				</#if>
-				
-				<#if topic.owner.username == user.getUsername()>
-					<p>
-						<a href="/topic/${topic.id}/entries/edit_entry/${entry.id}">Edit entry</a> |
-						<a href="/topic/${topic.id}/entries/delete_entry/${entry.id}">Delete entry</a>
-					</p>
-				</#if>
-				
-				<hr />
-			</li>
+			</div>
 		<#else>
-			<li>...There are no entries for this topic yet...</li>
+			<div class="card my-3">
+				<h5 class="card-header">...There are no entries for this topic yet...</h5>
+			</div>
 		</#list>
-	</ul>
 	
 </@base.content>

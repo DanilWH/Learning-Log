@@ -21,24 +21,24 @@
 
 		<ul class="navbar-nav navbar-right">
 		    <#if user??>
-		        <li class="nav-item">
+		        <li class="nav-item mx-1">
 		        	<span class="navbar-text">Hello, ${user.getUsername()}.</span>
 		        </li>
 			    <#if user.isAdmin()>
-			    	<li class="nav-item active">
-			    		<a href="/admin/users" class="nav-link">Users</a>
+			    	<li class="nav-item active mx-1">
+			    		<a href="/admin/users" class="btn btn-light">Users</a>
 			     	</li>
 				</#if>
 			    <form name="logoutForm" action="/logout" method="post">
 					<input type="hidden" name="_csrf" value="${_csrf.token}" />
-					<button name="submit" class="btn btn-outline-success my-2 my-sm-0">Log out</button>
+					<button name="submit" class="btn btn-outline-success my-2 my-sm-0 mx-1">Log out</button>
 				</form>
 			<#else>
 				<li class="nav-item"><a href="/registration" class="nav-link">Register</a></li>
 			    <li class="nav-item"><a href="/login" class="nav-link">Log in</a></li>
 			</#if>
-			<li class="nav-item">
-				<a href="/new_topic" class="btn btn-primary my-2 my-sm-0 ml-2">Add a new topic</a>
+			<li class="nav-item ml-1">
+				<a href="/new_topic" class="btn btn-primary my-2 my-sm-0">Add a new topic</a>
 			</li>
 		</ul>
 	</div>

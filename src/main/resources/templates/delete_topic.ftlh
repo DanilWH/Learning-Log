@@ -3,7 +3,7 @@
 
 <@base.content title="Delete topic - Learning Log">
 
-	<p>Delete the topic</p>
+	<h5>Delete the topic</h5>
 	
 	<p>
 		Are you sure you want to delete the topic
