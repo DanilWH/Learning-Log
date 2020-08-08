@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.PreRemove;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -66,9 +67,17 @@ public class Entry {
     public Entry (String text, Topic topic) {
         this.text = text;
         this.topic = topic;
+        // add up the general number of entries in the topic that the new entry belongs to.
+        this.topic.setEntriesNumber(this.topic.getEntriesNumber() + 1);
         
         this.dateTime = LocalDateTime.now();
         this.filenames = new ArrayList<String>();
+    }
+    
+    @PreRemove
+    public void substractEntriesNumber() {
+        // subtract the general number of entries in the topic that the new entry belongs to.
+        this.topic.setEntriesNumber(this.topic.getEntriesNumber() - 1);
     }
     
     public Long getId() {

@@ -9,7 +9,7 @@
 			<a href="/topic/${topic.id}/entries"
 			   class="list-group-item list-group-item-action">
 				<div class="d-flex w-100 justify-content-between">
-					<h5 class="mb-1">${topic.title}</h5>
+					<h5 class="mb-1">${topic.title}<span class="badge badge-primary ml-3">${topic.getEntriesNumber()} entries</span></h5>
 					<small class="text-muted">3 days ago</small>
 				</div>
 				<p class="mb-1">

@@ -27,7 +27,9 @@ public class Topic {
     @Type(type = "text")
     private String description;
     
-    private Accesses access;    
+    private Accesses access;
+    
+    private Long entriesNumber;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -60,6 +62,10 @@ public class Topic {
         return this.access;
     }
     
+    public Long getEntriesNumber() {
+        return this.entriesNumber;
+    }
+    
     public User getOwner() {
         return this.owner;
     }
@@ -79,6 +85,11 @@ public class Topic {
     public void setAccess(Accesses access) {
         this.access = access;
     }
+    
+    public void setEntriesNumber(Long entriesNumber) {
+        this.entriesNumber = entriesNumber;
+    }
+    
     public void setOwner(User owner) {
         this.owner = owner;
     }
