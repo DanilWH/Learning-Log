@@ -48,7 +48,7 @@ public class EntryController {
         
         model.put("topic", topic);
         
-        Iterable<Entry> entries = this.entryRepo.findByTopicIdOrderByDateTime(topicId);
+        Iterable<Entry> entries = this.entryRepo.findByTopicIdOrderByDateTimeDesc(topicId);
         model.put("entries", entries);
         
         return "entries";

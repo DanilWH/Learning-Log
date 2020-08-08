@@ -7,6 +7,6 @@ import com.example.LearningLog.models.Entry;
 public interface EntryRepo extends JpaRepository<Entry, Long> {
 
     Iterable<Entry> findByTopicId(Long topic_id);
-    Iterable<Entry> findByTopicIdOrderByDateTime(Long topic_id);
+    Iterable<Entry> findByTopicIdOrderByDateTimeDesc(Long topic_id);
     
 }
