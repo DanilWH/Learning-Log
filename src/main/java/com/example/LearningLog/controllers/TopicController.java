@@ -2,6 +2,8 @@ package com.example.LearningLog.controllers;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,17 +30,19 @@ public class TopicController {
     @Autowired
     private EntryRepo entryRepo;
     
-    @GetMapping("/my_topics")
-    public String my_topics(@AuthenticationPrincipal User user, Map<String, Object> model) {
-        Iterable<Topic> topics = this.topicRepo.findByOwnerId(user.getId());
-        model.put("topics", topics);
+    @GetMapping(value={"/my_topics", "/public_topics"})
+    public String my_topics(
+            @AuthenticationPrincipal User user,
+            Map<String, Object> model,
+            HttpServletRequest request
+    ) {
+        Iterable<Topic> topics = null;
         
-        return "topics";
-    }
-    
-    @GetMapping("/public_topics")
-    public String public_topics(Map<String, Object> model) {
-        Iterable<Topic> topics = this.topicRepo.findByAccess(Accesses.PUBLIC);
+        if (request.getRequestURI().equals("/my_topics"))
+            topics = this.topicRepo.findByOwnerId(user.getId());
+        else if (request.getRequestURI().equals("/public_topics"))
+            topics = this.topicRepo.findByAccess(Accesses.PUBLIC);
+        
         model.put("topics", topics);
         
         return "topics";

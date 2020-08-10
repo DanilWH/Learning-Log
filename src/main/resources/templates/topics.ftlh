@@ -10,7 +10,7 @@
 			   class="list-group-item list-group-item-action">
 				<div class="d-flex w-100 justify-content-between">
 					<h5 class="mb-1">${topic.title}<span class="badge badge-primary ml-3">${topic.getEntriesNumber()} entries</span></h5>
-					<small class="text-muted">3 days ago</small>
+					<small class="text-muted">${topic.getTimeCreationAgo()}</small>
 				</div>
 				<p class="mb-1">
 					<#assign des_lines = topic.description?split("\n") />

@@ -2,6 +2,8 @@ package com.example.LearningLog.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -176,5 +178,23 @@ public interface CommonOperationsForControllers {
          */
         String[] filesList = entry.getFilenames().toArray(new String[0]);
         deleteFilesFromServerIfExist(entry, filesList, uploadPath);
+    }
+    
+    public static String getTimeAgo(LocalDateTime localDateTime) {
+        ChronoUnit[] chronoUnits = {
+                ChronoUnit.SECONDS, ChronoUnit.MINUTES, ChronoUnit.HOURS,
+                ChronoUnit.DAYS, ChronoUnit.WEEKS, ChronoUnit.MONTHS, ChronoUnit.YEARS
+        };
+        String[] stringUnits = {"second", "minute", "hour", "day", "week", "month", "year"};
+        
+        int count = 0;
+        do
+            count++;
+        while (count < chronoUnits.length &&
+               chronoUnits[count].between(localDateTime, LocalDateTime.now()) != 0);
+        
+        return chronoUnits[count - 1].between(localDateTime, LocalDateTime.now()) +
+               " " + stringUnits[count - 1] +
+               " ago";
     }
 }

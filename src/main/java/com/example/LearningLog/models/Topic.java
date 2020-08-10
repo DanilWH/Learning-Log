@@ -1,5 +1,7 @@
 package com.example.LearningLog.models;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -14,6 +16,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
+import com.example.LearningLog.controllers.CommonOperationsForControllers;
+
 @Entity
 public class Topic {
     @Id
@@ -27,9 +31,15 @@ public class Topic {
     @Type(type = "text")
     private String description;
     
+    // determines if the topic is PRIVATE of PUBLIC.
     private Accesses access;
     
+    // keeps the number of entries that belong the topic.
     private Long entriesNumber;
+    
+    // keeps the time of creation of the topic (in seconds);
+    @Size(max = 20)
+    private LocalDateTime timeCreation;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -44,6 +54,12 @@ public class Topic {
         this.description = description;
         this.owner = owner;
         this.access = access;
+        this.entriesNumber = (long) 0;
+        this.timeCreation = LocalDateTime.now();
+    }
+    
+    public String getTimeCreationAgo() {
+        return CommonOperationsForControllers.getTimeAgo(this.timeCreation);
     }
     
     public Long getId() {
@@ -64,6 +80,10 @@ public class Topic {
     
     public Long getEntriesNumber() {
         return this.entriesNumber;
+    }
+    
+    public LocalDateTime getTimeCreation() {
+        return this.timeCreation;
     }
     
     public User getOwner() {
@@ -88,6 +108,10 @@ public class Topic {
     
     public void setEntriesNumber(Long entriesNumber) {
         this.entriesNumber = entriesNumber;
+    }
+    
+    public void setTimeCreation(LocalDateTime timeCreation) {
+        this.timeCreation = timeCreation;
     }
     
     public void setOwner(User owner) {
