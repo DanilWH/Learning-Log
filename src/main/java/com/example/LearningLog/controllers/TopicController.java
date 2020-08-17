@@ -39,9 +39,9 @@ public class TopicController {
         Iterable<Topic> topics = null;
         
         if (request.getRequestURI().equals("/my_topics"))
-            topics = this.topicRepo.findByOwnerId(user.getId());
+            topics = this.topicRepo.findByOwnerIdOrderByTimeCreationDesc(user.getId());
         else if (request.getRequestURI().equals("/public_topics"))
-            topics = this.topicRepo.findByAccess(Accesses.PUBLIC);
+            topics = this.topicRepo.findByAccessOrderByTimeCreationDesc(Accesses.PUBLIC);
         
         model.put("topics", topics);
         

@@ -9,8 +9,8 @@ import com.example.LearningLog.models.Topic;
 
 public interface TopicRepo extends JpaRepository<Topic, Integer> {
 
-    Iterable<Topic> findByOwnerId(Long owner_id);
-    Iterable<Topic> findByAccess(Accesses access);
+    Iterable<Topic> findByOwnerIdOrderByTimeCreationDesc(Long owner_id);
+    Iterable<Topic> findByAccessOrderByTimeCreationDesc(Accesses access);
     Optional<Topic> findById(Long id);
     
 }
