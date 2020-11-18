@@ -4,7 +4,6 @@
 <html lang="en">
 	<head>
 		<title>${title}</title>
-		<link href="/static/style.css" type="text/css" rel="stylesheet" />
 		
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	    <!-- Bootstrap CSS -->
