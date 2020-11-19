@@ -1,24 +1,16 @@
 package com.example.LearningLog.models;
 
-import java.time.LocalDateTime;
-
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.Size;
-
+import com.example.LearningLog.controllers.CommonOperationsForControllers;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
-import com.example.LearningLog.controllers.CommonOperationsForControllers;
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "topics")
 public class Topic {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)

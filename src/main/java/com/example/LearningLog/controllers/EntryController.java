@@ -1,26 +1,24 @@
 package com.example.LearningLog.controllers;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.example.LearningLog.models.Entry;
 import com.example.LearningLog.models.Topic;
 import com.example.LearningLog.models.User;
 import com.example.LearningLog.repos.EntryRepo;
 import com.example.LearningLog.repos.TopicRepo;
+import com.example.LearningLog.repos.UploadRepo;
+import com.example.LearningLog.service.UploadService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.NoResultException;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/topic")
@@ -30,7 +28,12 @@ public class EntryController {
     private TopicRepo topicRepo;
     @Autowired
     private EntryRepo entryRepo;
-    
+    @Autowired
+    private UploadRepo uploadRepo;
+
+    @Autowired
+    private UploadService uploadService;
+
     @Value("${upload.path}")
     private String uploadPath;
 
@@ -42,15 +45,21 @@ public class EntryController {
     ) {
         /*** Shows a list of the user's entries that are associated with a certain topic. ***/
         
-        Topic topic = this.topicRepo.findById(topicId).get();
+        Topic topic = this.topicRepo.findById(topicId).orElseThrow(() -> new NoResultException());
         
         CommonOperationsForControllers.checkTopicAccessabilityAndTopicOwner(topic, current_user);
         
         model.put("topic", topic);
-        
-        Iterable<Entry> entries = this.entryRepo.findByTopicIdOrderByDateTimeDesc(topicId);
+
+        // find the entries by its topic, and set the appropriate files from the database to each entry.
+        List<Entry> entries = this.entryRepo.findByTopicIdOrderByDateTimeDesc(topicId);
+        entries.stream().forEach(entry ->
+                entry.setUploads(this.uploadRepo.findByEntryId(entry.getId()))
+        );
+
+        // put the entries into the model.
         model.put("entries", entries);
-        
+
         return "entries";
     }
     
@@ -102,11 +111,14 @@ public class EntryController {
         // create the new entry object.
         Entry new_entry = new Entry(text, topic);
 
-        CommonOperationsForControllers.uploadFilesIfExist(new_entry, files, this.uploadPath);
-        
+        // CommonOperationsForControllers.uploadFilesIfExist(new_entry, files, this.uploadPath);
+
         // save the entry into the database.
         this.entryRepo.save(new_entry);
-        
+
+        // upload the user files after the new entry has been saved in the database.
+        this.uploadService.uploadFiles(new_entry, files);
+
         return "redirect:/topic/" + topicId + "/entries";
         
         /**

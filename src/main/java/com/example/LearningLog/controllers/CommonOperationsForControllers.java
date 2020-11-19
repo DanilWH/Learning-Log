@@ -1,21 +1,20 @@
 package com.example.LearningLog.controllers;
 
+import com.example.LearningLog.models.Accesses;
+import com.example.LearningLog.models.Entry;
+import com.example.LearningLog.models.Topic;
+import com.example.LearningLog.models.User;
+import com.example.LearningLog.repos.UserRepo;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-
-import com.example.LearningLog.models.Accesses;
-import com.example.LearningLog.models.Entry;
-import com.example.LearningLog.models.Topic;
-import com.example.LearningLog.models.User;
-import com.example.LearningLog.repos.UserRepo;
 
 public interface CommonOperationsForControllers {
     
@@ -143,7 +142,7 @@ public interface CommonOperationsForControllers {
             file.transferTo(new File(uploadPath + resultFilename));
             
             // store the name of the current file to the list of the new entry.
-            entry.getFilenames().add(resultFilename);
+            /*** entry.getFilenames().add(resultFilename); ***/
         }
     }
     
@@ -157,12 +156,12 @@ public interface CommonOperationsForControllers {
         ***/
         
         // we don't need to do anything if the current entry doesn't contain files.
-        if (entry != null && entry.getFilenames().isEmpty()) return;
+        if (entry != null) return;
         
         // but if the entry contain at least one file then we have to delete it.
         for (String filename : filesList) {
             // remove the files from the entry in the repository.
-            entry.getFilenames().remove(filename);
+            /*** entry.getFilenames().remove(filename); ***/
         
             // remove the files from the server directory.
             File removingFile = new File(uploadPath + filename);
@@ -176,8 +175,8 @@ public interface CommonOperationsForControllers {
          * deleteFilesFromServerIfExist(Entry entry, String[] filesList, String uploadPath)
          * but a little bit more readable.
          */
-        String[] filesList = entry.getFilenames().toArray(new String[0]);
-        deleteFilesFromServerIfExist(entry, filesList, uploadPath);
+        /*** String[] filesList = entry.getFilenames().toArray(new String[0]); ***/
+        /*** deleteFilesFromServerIfExist(entry, filesList, uploadPath); ***/
     }
     
     public static String getTimeAgo(LocalDateTime localDateTime) {

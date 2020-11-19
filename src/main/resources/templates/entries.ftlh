@@ -41,11 +41,9 @@
 						</div>
 					</#if>
 				</div>
-				<#if entry.filenames??>
-					<#list entry.filenames as filename>
-						<img src="/img/${filename}" class="card-img-bottom px-3 pb-3" />
-					</#list>
-				</#if>
+				<#list entry.uploads as upload>
+					<div>${upload.getFilename()}</div>
+				</#list>
 			</div>
 		<#else>
 			<div class="card my-3">
