@@ -42,7 +42,7 @@
 					</#if>
 				</div>
 				<#list entry.uploads as upload>
-					<div>${upload.getFilename()}</div>
+					<img src="/topic/images?id=${upload.id}" class="card-img-bottom px-3 pb-3" />
 				</#list>
 			</div>
 		<#else>

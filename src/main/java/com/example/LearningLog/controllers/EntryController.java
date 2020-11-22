@@ -2,6 +2,7 @@ package com.example.LearningLog.controllers;
 
 import com.example.LearningLog.models.Entry;
 import com.example.LearningLog.models.Topic;
+import com.example.LearningLog.models.Upload;
 import com.example.LearningLog.models.User;
 import com.example.LearningLog.repos.EntryRepo;
 import com.example.LearningLog.repos.TopicRepo;
@@ -15,10 +16,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/topic")
@@ -41,6 +45,8 @@ public class EntryController {
     public String entries(
             @PathVariable(value="topicId") Long topicId,
             @AuthenticationPrincipal User current_user,
+            HttpServletResponse response,
+            HttpServletRequest request,
             Map<String, Object> model
     ) {
         /*** Shows a list of the user's entries that are associated with a certain topic. ***/
@@ -51,16 +57,28 @@ public class EntryController {
         
         model.put("topic", topic);
 
-        // find the entries by its topic, and set the appropriate files from the database to each entry.
         List<Entry> entries = this.entryRepo.findByTopicIdOrderByDateTimeDesc(topicId);
-        entries.stream().forEach(entry ->
-                entry.setUploads(this.uploadRepo.findByEntryId(entry.getId()))
-        );
 
         // put the entries into the model.
         model.put("entries", entries);
 
         return "entries";
+    }
+
+    @GetMapping("/images")
+    public void showImages(
+            @RequestParam("id") Long imageId,
+            HttpServletResponse response
+    ) throws IOException {
+        // find the necessary image.
+        Upload upload = this.uploadRepo.findById(imageId).orElseThrow(() -> new NoResultException());
+
+        // write the bytes of the uploads to the response.
+        response.setContentType("image/jpeg, image/jpg, image/png, image/gif");
+        response.getOutputStream().write(upload.getBytes());
+
+        // close the response connection.
+        response.getOutputStream().close();
     }
     
     @GetMapping("/{topicId}/entries/new_entry")
@@ -110,14 +128,18 @@ public class EntryController {
         
         // create the new entry object.
         Entry new_entry = new Entry(text, topic);
-
-        // CommonOperationsForControllers.uploadFilesIfExist(new_entry, files, this.uploadPath);
+        // upload images if any.
+        new_entry.setUploads(files.stream().map(file -> {
+            try {
+                return this.uploadService.createUploadObject(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }).collect(Collectors.toList()));
 
         // save the entry into the database.
         this.entryRepo.save(new_entry);
-
-        // upload the user files after the new entry has been saved in the database.
-        this.uploadService.uploadFiles(new_entry, files);
 
         return "redirect:/topic/" + topicId + "/entries";
         
@@ -164,15 +186,21 @@ public class EntryController {
     ) throws IOException {
         /*** Processes editing a entry and saves the changes in the database. ***/
         
-        Entry entry = this.entryRepo.findById(entryId).get();
+        Entry entry = this.entryRepo.findById(entryId).orElseThrow(() -> new NoResultException());
         Topic topic = entry.getTopic();
         
         CommonOperationsForControllers.checkTopicOwner(topic, current_user);
-        
-        if (onDelete.isPresent())
-            CommonOperationsForControllers.deleteFilesFromServerIfExist(entry, onDelete.get(), this.uploadPath);
-        CommonOperationsForControllers.uploadFilesIfExist(entry, files, this.uploadPath);
-        
+
+        // remove the necessary files.
+        if (onDelete.isPresent()) {
+            //CommonOperationsForControllers.deleteFilesFromServerIfExist(entry, onDelete.get(), this.uploadPath);
+            for (String deletingFilename : onDelete.get())
+                entry.getUploads().remove(this.uploadRepo.findByFilename(deletingFilename));
+        }
+        // upload new files.
+        for (MultipartFile file : files)
+            entry.getUploads().add(this.uploadService.createUploadObject(file));
+
         entry.setText(text);
         this.entryRepo.save(entry);
         
@@ -213,7 +241,7 @@ public class EntryController {
         
         CommonOperationsForControllers.checkTopicOwner(topic, current_user);
         
-        CommonOperationsForControllers.deleteFilesFromServerIfExist(entry, this.uploadPath);
+        // CommonOperationsForControllers.deleteFilesFromServerIfExist(entry, this.uploadPath);
         
         this.entryRepo.delete(entry);
         

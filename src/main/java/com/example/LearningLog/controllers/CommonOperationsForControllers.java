@@ -1,20 +1,14 @@
 package com.example.LearningLog.controllers;
 
 import com.example.LearningLog.models.Accesses;
-import com.example.LearningLog.models.Entry;
 import com.example.LearningLog.models.Topic;
 import com.example.LearningLog.models.User;
 import com.example.LearningLog.repos.UserRepo;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.UUID;
 
 public interface CommonOperationsForControllers {
     
@@ -103,80 +97,6 @@ public interface CommonOperationsForControllers {
         
         // return null as a result if the password is valid.
         return null;
-    }
-    
-    public static void uploadFilesIfExist(
-            Entry entry,
-            List<MultipartFile> files,
-            String uploadPath
-    ) throws IOException {
-        /*** 
-         * Uploads the user's chosen files
-         * but if the user didn't choose any file
-         * then this function doesn't do anything as well.
-        ***/
-        
-        /*
-         * Because the forms like <input type="file" multiple /> return at least
-         * 1 object even if it's empty we have to check if the first element
-         * contains an empty value, if so then that means the user didn't select any file
-         * so we make sure if the user selected at least one file.
-         */
-        if (files != null && files.get(0).isEmpty()) return;
-        
-        // but if the user selected at least one file then we:
-        // make the directory if it doesn't exist.
-        File uploadDir = new File(uploadPath);
-
-        if (!uploadDir.exists())
-            uploadDir.mkdirs();
-        
-        // go through the list of files.
-        for (MultipartFile file : files) {
-            // create a unique name for the current file.
-            String uuidFilename = UUID.randomUUID().toString();
-            String resultFilename = uuidFilename + "." + file.getOriginalFilename();
-            
-            // store store the current file on the server in the path we
-            // pointed in application.properties.
-            file.transferTo(new File(uploadPath + resultFilename));
-            
-            // store the name of the current file to the list of the new entry.
-            /*** entry.getFilenames().add(resultFilename); ***/
-        }
-    }
-    
-    public static void deleteFilesFromServerIfExist(
-            Entry entry, String[] filesList, String uploadPath
-    ) {
-        /*** 
-         * Removes the selected files from
-         * the entry entity in the repository
-         * and form the server directory.
-        ***/
-        
-        // we don't need to do anything if the current entry doesn't contain files.
-        if (entry != null) return;
-        
-        // but if the entry contain at least one file then we have to delete it.
-        for (String filename : filesList) {
-            // remove the files from the entry in the repository.
-            /*** entry.getFilenames().remove(filename); ***/
-        
-            // remove the files from the server directory.
-            File removingFile = new File(uploadPath + filename);
-            removingFile.delete();
-        }
-    }
-    
-    public static void deleteFilesFromServerIfExist(Entry entry, String uploadPath) {
-        /*** 
-         * This is a prototype of the function
-         * deleteFilesFromServerIfExist(Entry entry, String[] filesList, String uploadPath)
-         * but a little bit more readable.
-         */
-        /*** String[] filesList = entry.getFilenames().toArray(new String[0]); ***/
-        /*** deleteFilesFromServerIfExist(entry, filesList, uploadPath); ***/
     }
     
     public static String getTimeAgo(LocalDateTime localDateTime) {

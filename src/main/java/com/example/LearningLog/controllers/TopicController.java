@@ -1,9 +1,11 @@
 package com.example.LearningLog.controllers;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.example.LearningLog.models.Accesses;
+import com.example.LearningLog.models.Entry;
+import com.example.LearningLog.models.Topic;
+import com.example.LearningLog.models.User;
+import com.example.LearningLog.repos.EntryRepo;
+import com.example.LearningLog.repos.TopicRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,12 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.LearningLog.models.Accesses;
-import com.example.LearningLog.models.Entry;
-import com.example.LearningLog.models.Topic;
-import com.example.LearningLog.models.User;
-import com.example.LearningLog.repos.EntryRepo;
-import com.example.LearningLog.repos.TopicRepo;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @Controller
 public class TopicController {
@@ -137,12 +135,12 @@ public class TopicController {
         Topic topic = this.topicRepo.findById(topicId).get();
         
         CommonOperationsForControllers.checkTopicOwner(topic, current_user);
-        
+
         // delete all files related to the topic from the server.
         Iterable<Entry> entries = this.entryRepo.findByTopicId(topicId);
         for (Entry entry : entries)
-            CommonOperationsForControllers.deleteFilesFromServerIfExist(entry, this.uploadPath);
-        
+            this.entryRepo.delete(entry);
+
         this.topicRepo.delete(topic);
         
         return "redirect:/my_topics";

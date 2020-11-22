@@ -11,16 +11,16 @@
 		<div class="form group">
 			<textarea name="text" rows="5" class="form-control">${entry.text}</textarea><br />
 		</div>
-		<#if entry.filenames??>
+		<#if entry.uploads??>
 			<div class="card-columns">
-				<#list entry.filenames as filename>
+				<#list entry.uploads as upload>
 					<div class="card">
-						<img src="/img/${filename}" class="rounded card-img-top"  /><br />
+						<img src="/topic/images?id=${upload.id}" class="rounded card-img-top"  /><br />
 						<div class="card-footer">
 							<div class="custom-control custom-checkbox">
-								<input id="${filename}" type="checkbox" name="onDelete"
-									   value="${filename}" class="custom-control-input" />
-								<label for="${filename}" class="custom-control-label">Delete ${filename}</label>
+								<input id="${upload.filename}" type="checkbox" name="onDelete"
+									   value="${upload.filename}" class="custom-control-input" />
+								<label for="${upload.filename}" class="custom-control-label">Delete ${upload.filename}</label>
 							</div>
 						</div>
 					</div>

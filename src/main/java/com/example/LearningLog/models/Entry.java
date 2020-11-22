@@ -40,7 +40,13 @@ public class Entry {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Topic topic;
 
-    @Transient
+    @OneToMany(
+            targetEntity = Upload.class,
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
+
     private List<Upload> uploads;
 
     public Entry () {
