@@ -15,7 +15,7 @@
 				<a class="nav-link" href="/public_topics">Public topics</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="/my_topics">Own topics</a>
+				<a class="nav-link" href="/user_topics/${currentUserId}">Own topics</a>
 			</li>
 		</ul>
 

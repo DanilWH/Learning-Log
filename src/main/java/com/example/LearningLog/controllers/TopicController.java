@@ -6,6 +6,7 @@ import com.example.LearningLog.models.Topic;
 import com.example.LearningLog.models.User;
 import com.example.LearningLog.repos.EntryRepo;
 import com.example.LearningLog.repos.TopicRepo;
+import com.example.LearningLog.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -22,27 +24,36 @@ import java.util.Map;
 public class TopicController {
     @Value("${upload.path}")
     private String uploadPath;
-    
+
+    @Autowired
+    private UserRepo userRepo;
     @Autowired
     private TopicRepo topicRepo;
     @Autowired
     private EntryRepo entryRepo;
     
-    @GetMapping(value={"/my_topics", "/public_topics"})
+    @GetMapping(value={"/user_topics/{userId}", "/public_topics"})
     public String my_topics(
-            @AuthenticationPrincipal User user,
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable(required = false) Long userId,
             Map<String, Object> model,
             HttpServletRequest request
     ) {
         Iterable<Topic> topics = null;
-        
-        if (request.getRequestURI().equals("/my_topics"))
-            topics = this.topicRepo.findByOwnerIdOrderByTimeCreationDesc(user.getId());
-        else if (request.getRequestURI().equals("/public_topics"))
+
+        if (request.getRequestURI().equals("/public_topics")) {
             topics = this.topicRepo.findByAccessOrderByTimeCreationDesc(Accesses.PUBLIC);
-        
+        }
+        else if (request.getRequestURI().equals("/user_topics/" + userId)) {
+            User user = this.userRepo.findById(userId).orElseThrow(NoResultException::new);
+            topics = this.topicRepo.findByOwnerIdOrderByTimeCreationDesc(userId);
+
+            model.put("user", user);
+        }
+
         model.put("topics", topics);
-        
+        model.put("isCurrentUser", userId != null && currentUser.getId().equals(userId));
+
         return "topics";
     }
     

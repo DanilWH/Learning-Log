@@ -2,8 +2,8 @@
 
 <@base.content title="Topics - Learning Log">
     
-	<h5 class="mb-4">Topics:</h5>
-	
+<h5 class="mb-4"><#if !isCurrentUser>${(user.username)?ifExists} </#if>Topics:</h5>
+
 	<div class="list-group">
 		<#list topics as topic>
 			<a href="/topic/${topic.id}/entries"
@@ -22,8 +22,8 @@
 					we show the username of a particular topic if the current
 					user is watching public topics.
 				 -->
-				<#if springMacroRequestContext.getRequestUri() == "/public_topics">
-					<small class="text-muted">u/${topic.owner.username}</small>
+				<#if !isCurrentUser>
+					<small class="text-muted"><a href="/user_topics/${topic.owner.id}">u/${topic.owner.username}</a></small>
 				</#if>
 			</a>
 		<#else>
