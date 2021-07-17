@@ -4,9 +4,10 @@ import com.example.LearningLog.models.Entry;
 import com.example.LearningLog.models.Topic;
 import com.example.LearningLog.models.Upload;
 import com.example.LearningLog.models.User;
-import com.example.LearningLog.repos.EntryRepo;
+import com.example.LearningLog.models.dto.EntryDto;
 import com.example.LearningLog.repos.TopicRepo;
 import com.example.LearningLog.repos.UploadRepo;
+import com.example.LearningLog.service.EntryService;
 import com.example.LearningLog.service.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +26,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/topic")
@@ -31,7 +35,7 @@ public class EntryController {
     @Autowired
     private TopicRepo topicRepo;
     @Autowired
-    private EntryRepo entryRepo;
+    private EntryService entryService;
     @Autowired
     private UploadRepo uploadRepo;
 
@@ -44,7 +48,7 @@ public class EntryController {
     @GetMapping("/{topicId}/entries")
     public String entries(
             @PathVariable(value="topicId") Long topicId,
-            @AuthenticationPrincipal User current_user,
+            @AuthenticationPrincipal User currentUser,
             HttpServletResponse response,
             HttpServletRequest request,
             Map<String, Object> model
@@ -53,11 +57,11 @@ public class EntryController {
         
         Topic topic = this.topicRepo.findById(topicId).orElseThrow(() -> new NoResultException());
         
-        CommonOperationsForControllers.checkTopicAccessabilityAndTopicOwner(topic, current_user);
+        CommonOperationsForControllers.checkTopicAccessabilityAndTopicOwner(topic, currentUser);
         
         model.put("topic", topic);
 
-        List<Entry> entries = this.entryRepo.findByTopicIdOrderByDateTimeDesc(topicId);
+        List<EntryDto> entries = this.entryService.getByTopicIdOrderByDateTimeDesc(topicId, currentUser);
 
         // put the entries into the model.
         model.put("entries", entries);
@@ -71,7 +75,7 @@ public class EntryController {
             HttpServletResponse response
     ) throws IOException {
         // find the necessary image.
-        Upload upload = this.uploadRepo.findById(imageId).orElseThrow(() -> new NoResultException());
+        Upload upload = this.uploadRepo.findById(imageId).orElseThrow(NoResultException::new);
 
         // write the bytes of the uploads to the response.
         response.setContentType("image/jpeg, image/jpg, image/png, image/gif");
@@ -125,36 +129,10 @@ public class EntryController {
             // to the model if the input is incorrect and then just call the new_entry template.
             return "new_entry";
         }
-        
-        // create the new entry object.
-        Entry new_entry = new Entry(text, topic);
-        // upload images if any.
-        new_entry.setUploads(files.stream().map(file -> {
-            try {
-                return this.uploadService.createUploadObject(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }).collect(Collectors.toList()));
 
-        // save the entry into the database.
-        this.entryRepo.save(new_entry);
+        this.entryService.addEntry(text, topic, files);
 
         return "redirect:/topic/" + topicId + "/entries";
-        
-        /**
-         * More modern approach:
-         * 
-         * add the parameter "@Valid Entry entry"
-         * 
-         * this.topicRepo.findById(topicId).map(topic -> {
-         *     entry.setTopic(topic);
-         *     return this.entryRepo.save(entry);
-         * });
-         * 
-         * return "redirect:/topics/" + topicId + "/entries";
-         */
     }
     
     @GetMapping("/{topicId}/entries/edit_entry/{entryId}")
@@ -165,7 +143,7 @@ public class EntryController {
     ) {
         /*** Renders the "Edit entry" page where user can edit their entries. ***/
         
-        Entry entry = this.entryRepo.findById(entryId).get();
+        Entry entry = this.entryService.getById(entryId);
         Topic topic = entry.getTopic();
         
         CommonOperationsForControllers.checkTopicOwner(topic, current_user);
@@ -186,24 +164,13 @@ public class EntryController {
     ) throws IOException {
         /*** Processes editing a entry and saves the changes in the database. ***/
         
-        Entry entry = this.entryRepo.findById(entryId).orElseThrow(() -> new NoResultException());
+        Entry entry = this.entryService.getById(entryId);
         Topic topic = entry.getTopic();
         
         CommonOperationsForControllers.checkTopicOwner(topic, current_user);
 
-        // remove the necessary files.
-        if (onDelete.isPresent()) {
-            //CommonOperationsForControllers.deleteFilesFromServerIfExist(entry, onDelete.get(), this.uploadPath);
-            for (String deletingFilename : onDelete.get())
-                entry.getUploads().remove(this.uploadRepo.findByFilename(deletingFilename));
-        }
-        // upload new files.
-        for (MultipartFile file : files)
-            entry.getUploads().add(this.uploadService.createUploadObject(file));
+        this.entryService.updateEntry(entry, onDelete, files, text);
 
-        entry.setText(text);
-        this.entryRepo.save(entry);
-        
         return "redirect:/topic/" + topic.getId() + "/entries";
     }
     
@@ -218,7 +185,7 @@ public class EntryController {
          * asked if the really want to delete the entry.
         ***/
         
-        Entry entry = this.entryRepo.findById(entryId).get();
+        Entry entry = this.entryService.getById(entryId);
         Topic topic = entry.getTopic();
         
         CommonOperationsForControllers.checkTopicOwner(topic, current_user);
@@ -236,15 +203,40 @@ public class EntryController {
     ) {
         /*** Processes deleting a entry from the database. ***/
         
-        Entry entry = this.entryRepo.findById(entryId).get();
+        Entry entry = this.entryService.getById(entryId);
         Topic topic = entry.getTopic();
         
         CommonOperationsForControllers.checkTopicOwner(topic, current_user);
         
         // CommonOperationsForControllers.deleteFilesFromServerIfExist(entry, this.uploadPath);
-        
-        this.entryRepo.delete(entry);
-        
+
+        this.entryService.delete(entry);
+
         return "redirect:/topic/" + topic.getId() + "/entries";
+    }
+
+    @GetMapping("/entry/{entryId}/like")
+    public String entryLike(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable Long entryId,
+            RedirectAttributes redirectAttributes,
+            @RequestHeader(required = false) String referer
+    ) {
+        Entry entry = this.entryService.getById(entryId);
+        Set<User> likes = entry.getLikes();
+
+        if (likes.contains(currentUser)) {
+            likes.remove(currentUser);
+        } else {
+            likes.add(currentUser);
+        }
+
+        UriComponents components = UriComponentsBuilder.fromHttpUrl(referer).build();
+
+        components.getQueryParams()
+                .entrySet()
+                .forEach(pair -> redirectAttributes.addAttribute(pair.getKey(), pair.getValue()));
+
+        return "redirect:" + components.getPath();
     }
 }

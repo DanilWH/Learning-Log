@@ -7,7 +7,7 @@
 	
 	<p>
 		Are you sure you want to delete the entry of the
-		topic<a href="/topic/${topic.id}/entries"> ${topic.title} </a>from ${entry.dateTime}?
+		topic<a href="/topic/${topic.id}/entries"> ${topic.title} </a>from ${entry.dateTimeFormatted}?
 	</p>
 	
 	<@common.delete_confirm

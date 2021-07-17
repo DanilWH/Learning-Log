@@ -8,6 +8,7 @@ import java.util.List;
 public interface EntryRepo extends JpaRepository<Entry, Long> {
 
     Iterable<Entry> findByTopicId(Long topic_id);
+
     List<Entry> findByTopicIdOrderByDateTimeDesc(Long topic_id);
-    
+
 }

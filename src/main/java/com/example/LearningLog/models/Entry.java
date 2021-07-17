@@ -1,5 +1,6 @@
 package com.example.LearningLog.models;
 
+import com.example.LearningLog.models.util.EntryHelper;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
@@ -7,9 +8,10 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "entries")
@@ -49,6 +51,14 @@ public class Entry {
 
     private List<Upload> uploads;
 
+    @ManyToMany
+    @JoinTable(
+            name = "entry_likes",
+            joinColumns = { @JoinColumn(name = "entry_id") },
+            inverseJoinColumns = { @JoinColumn(name = "user_id") }
+    )
+    private Set<User> likes = new HashSet<>();
+
     public Entry () {
     }
 
@@ -68,14 +78,16 @@ public class Entry {
         this.topic.setEntriesNumber(this.topic.getEntriesNumber() - 1);
     }
 
+    public String getDateTimeFormatted() {
+        return EntryHelper.formatDateTime(this.dateTime);
+    }
+
     public Long getId() {
         return this.id;
     }
 
-    public String getDateTime() {
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MMMM d, Y HH:mm");
-
-        return dateFormat.format(this.dateTime);
+    public LocalDateTime getDateTime() {
+        return this.dateTime;
     }
 
     public String getText() {
@@ -89,7 +101,11 @@ public class Entry {
     public Topic getTopic() {
         return this.topic;
     }
-    
+
+    public Set<User> getLikes() {
+        return likes;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -108,5 +124,9 @@ public class Entry {
 
     public void setTopic(Topic topic) {
         this.topic = topic;
+    }
+
+    public void setLikes(Set<User> likes) {
+        this.likes = likes;
     }
 }
