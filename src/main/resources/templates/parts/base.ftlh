@@ -13,9 +13,6 @@
 	    	  integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX"
 	    	  crossorigin="anonymous"
 	    />
-
-		<!-- Font Awesome. -->
-		<script src="https://kit.fontawesome.com/69a74d55b8.js" crossorigin="anonymous"></script>
 	</head>
 	<body>
 		<#include "navbar.ftlh" />
