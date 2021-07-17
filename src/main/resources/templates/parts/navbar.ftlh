@@ -37,9 +37,6 @@
 				<li class="nav-item"><a href="/registration" class="nav-link">Register</a></li>
 			    <li class="nav-item"><a href="/login" class="nav-link">Log in</a></li>
 			</#if>
-			<li class="nav-item ml-1">
-				<a href="/new_topic" class="btn btn-primary my-2 my-sm-0">Add a new topic</a>
-			</li>
 		</ul>
 	</div>
 </nav>

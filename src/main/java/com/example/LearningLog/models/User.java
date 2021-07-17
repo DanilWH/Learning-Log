@@ -1,23 +1,13 @@
 package com.example.LearningLog.models;
 
-import java.util.Collection;
-import java.util.Set;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Table;
-import javax.validation.constraints.Size;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "usr")
@@ -38,6 +28,22 @@ public class User implements UserDetails {
     @CollectionTable(name="user_role", joinColumns=@JoinColumn(name="user_id"))
     @Enumerated(EnumType.STRING) // we want the enum is stored as a string.
     private Set<Role> roles;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_subscriptions",
+            joinColumns = { @JoinColumn(name = "channel_id") },
+            inverseJoinColumns = { @JoinColumn(name = "subscriber_id") }
+    )
+    private Set<User> subscribers = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_subscriptions",
+            joinColumns = { @JoinColumn(name = "subscriber_id") },
+            inverseJoinColumns = { @JoinColumn(name = "channel_id") }
+    )
+    private Set<User> subscriptions = new HashSet<>();
 
     public boolean isAdmin() {
         return roles.contains(Role.ADMIN);
@@ -106,5 +112,21 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return isActive();
+    }
+
+    public Set<User> getSubscribers() {
+        return subscribers;
+    }
+
+    public void setSubscribers(Set<User> subscribers) {
+        this.subscribers = subscribers;
+    }
+
+    public Set<User> getSubscriptions() {
+        return subscriptions;
+    }
+
+    public void setSubscriptions(Set<User> subscriptions) {
+        this.subscriptions = subscriptions;
     }
 }

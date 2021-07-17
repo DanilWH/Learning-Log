@@ -6,18 +6,17 @@ import com.example.LearningLog.models.Topic;
 import com.example.LearningLog.models.User;
 import com.example.LearningLog.repos.EntryRepo;
 import com.example.LearningLog.repos.TopicRepo;
-import com.example.LearningLog.repos.UserRepo;
+import com.example.LearningLog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.persistence.NoResultException;
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @Controller
@@ -26,37 +25,59 @@ public class TopicController {
     private String uploadPath;
 
     @Autowired
-    private UserRepo userRepo;
-    @Autowired
     private TopicRepo topicRepo;
     @Autowired
     private EntryRepo entryRepo;
-    
-    @GetMapping(value={"/user_topics/{userId}", "/public_topics"})
-    public String my_topics(
-            @AuthenticationPrincipal User currentUser,
-            @PathVariable(required = false) Long userId,
-            Map<String, Object> model,
-            HttpServletRequest request
-    ) {
-        Iterable<Topic> topics = null;
 
-        if (request.getRequestURI().equals("/public_topics")) {
-            topics = this.topicRepo.findByAccessOrderByTimeCreationDesc(Accesses.PUBLIC);
-        }
-        else if (request.getRequestURI().equals("/user_topics/" + userId)) {
-            User user = this.userRepo.findById(userId).orElseThrow(NoResultException::new);
-            topics = this.topicRepo.findByOwnerIdOrderByTimeCreationDesc(userId);
+    @Autowired
+    private UserService userService;
 
-            model.put("user", user);
-        }
+    @GetMapping("/public_topics")
+    public String public_topics(Model model) {
+        Iterable<Topic> topics = this.topicRepo.findByAccessOrderByTimeCreationDesc(Accesses.PUBLIC);
 
-        model.put("topics", topics);
-        model.put("isCurrentUser", userId != null && currentUser.getId().equals(userId));
+        model.addAttribute("topics", topics);
 
         return "topics";
     }
-    
+
+    @GetMapping("/user_topics/{userId}")
+    public String user_topics(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable Long userId,
+            Model model
+    ) {
+        Iterable<Topic> topics = null;
+
+        User user = this.userService.getUserById(userId);
+        topics = this.topicRepo.findByOwnerIdOrderByTimeCreationDesc(userId);
+
+        model.addAttribute("user", user);
+        model.addAttribute("topics", topics);
+        model.addAttribute("isCurrentUser", userId != null && currentUser.getId().equals(userId));
+        model.addAttribute("isSubscribed", user.getSubscribers().contains(currentUser));
+        System.out.println(user.getSubscribers().contains(currentUser));
+        model.addAttribute("subscribersCount", user.getSubscribers().size());
+        model.addAttribute("subscriptionsCount", user.getSubscriptions().size());
+
+        return "userTopics";
+    }
+
+    @GetMapping("/user_topics/{userId}/{type}")
+    public String userSubscribe(
+            @PathVariable Long userId,
+            @PathVariable String type,
+            @AuthenticationPrincipal User currentUser
+    ) {
+        if (type.equals("subscribe")) {
+            this.userService.subscribe(userId, currentUser);
+        } else if (type.equals("unsubscribe")) {
+            this.userService.unsubscribe(userId, currentUser);
+        }
+
+        return "redirect:/user_topics/" + userId;
+    }
+
     @GetMapping("/new_topic")
     public String new_topic(Map<String, Object> model) {
         model.put("accesses", Accesses.values());
